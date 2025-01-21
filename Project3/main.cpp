@@ -97,9 +97,6 @@ void InitGame()
     LoadButton(DW_butt, "dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
     LoadButton(Exit_butt, "Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -24, .02, .04);
 
-
-   
-
     //splittedEnemy[1][1].hBitmap = (HBITMAP)LoadImageA(NULL, "enemy1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     srand(0);
 
