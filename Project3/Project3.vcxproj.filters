@@ -13,10 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{ae237180-f275-462b-9395-7c785740ab12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Debug\Battlephon1.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\dw_butt.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\dw_butt_glow.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\enemy1.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\enemycco.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\exit_butt.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\lootchest.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\Lootphon1.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\phon1.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\pw_butt.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\pw_butt_glow.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\shar.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\sw_butt.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\sw_butt_glow.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\terminal.bmp">
+      <Filter>res</Filter>
+    </Image>
   </ItemGroup>
 </Project>
