@@ -65,7 +65,7 @@ typedef struct {
 } button;
 
 
-button PW_butt, SW_butt, DW_butt, Exit_butt;
+button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt;
 HBITMAP hBack;// хэндл для фонового изображения
 HBITMAP hBattleBack;
 
@@ -95,7 +95,9 @@ void InitGame()
     LoadButton(PW_butt, "pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
     LoadButton(SW_butt, "sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
     LoadButton(DW_butt, "dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
+    LoadButton(Enemy_butt, "Enemy_butt.bmp", "Enemy_butt.bmp", 0, 0, .5, .5);
     LoadButton(Exit_butt, "Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -24, .02, .04);
+
 
     //splittedEnemy[1][1].hBitmap = (HBITMAP)LoadImageA(NULL, "enemy1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     srand(0);
