@@ -95,7 +95,7 @@ void InitGame()
     LoadButton(PW_butt, "pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
     LoadButton(SW_butt, "sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
     LoadButton(DW_butt, "dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
-    LoadButton(Enemy_butt, "Enemy_butt.bmp", "Enemy_butt.bmp", 0, 0, .5, .5);
+    LoadButton(Enemy_butt, "Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .60, .25);
     LoadButton(Exit_butt, "Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -24, .02, .04);
 
 
@@ -283,7 +283,7 @@ void ShowBattle() {
     bool sw = ShowButton(SW_butt);
     bool dw = ShowButton(DW_butt);
     bool exit = ShowButton(Exit_butt);
-
+    bool enemy = ShowButton(Enemy_butt);
     if (L_Mouse)
     {
         if (pw)
@@ -304,15 +304,9 @@ void ShowRacketAndBall()
     }
     if (ball.dy < 0 && (enemy.x - racket.width / 4 > ball.x || ball.x > enemy.x + racket.width / 4))
     {
-        //имитируем разумность оппонента. на самом деле, компьютер никогда не проигрывает, и мы не считаем попадает ли его ракетка по шарику
-        //вместо этого, мы всегда делаем отскок от потолка, а раектку противника двигаем - подставляем под шарик
-        //движение будет только если шарик летит вверх, и только если шарик по оси X выходит за пределы половины длины ракетки
-        //в этом случае, мы смешиваем координаты ракетки и шарика в пропорции 9 к 1
         enemy.x = ball.x * .1 + enemy.x * .9;
     }
     ShowBitmap(window.context, p.x, p.y, ball.rad, ball.rad, ball.hBitmap);
-    //  ShowBitmap(window.context, enemy.x - racket.width / 2, 0, racket.width, racket.height, enemy.hBitmap);//ракетка оппонента
-     // ShowBitmap(window.context, ball.x - ball.rad, ball.y - ball.rad, 2 * ball.rad, 2 * ball.rad, ball.hBitmap, true);// шарик
 }
 
 void LimitRacket()
