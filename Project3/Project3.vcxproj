@@ -139,12 +139,14 @@
     <Image Include="..\Debug\enemy1.bmp" />
     <Image Include="..\Debug\enemycco.bmp" />
     <Image Include="..\Debug\exit_butt.bmp" />
+    <Image Include="..\Debug\Health_bar.bmp" />
     <Image Include="..\Debug\lootchest.bmp" />
     <Image Include="..\Debug\Lootphon1.bmp" />
     <Image Include="..\Debug\phon1.bmp" />
     <Image Include="..\Debug\pw_butt.bmp" />
     <Image Include="..\Debug\pw_butt_glow.bmp" />
     <Image Include="..\Debug\shar.bmp" />
+    <Image Include="..\Debug\Shield_bar.bmp" />
     <Image Include="..\Debug\sw_butt.bmp" />
     <Image Include="..\Debug\sw_butt_glow.bmp" />
     <Image Include="..\Debug\terminal.bmp" />
