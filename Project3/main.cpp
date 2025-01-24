@@ -64,6 +64,13 @@ typedef struct {
     HBITMAP hBitmapGlow;
 } button;
 
+typedef struct {
+    float x, y, width, height;
+    HBITMAP hBitmap;
+    HBITMAP hBitmapGlow;
+} Bar;
+
+Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar;   
 
 button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt;
 HBITMAP hBack;// хэндл для фонового изображения
@@ -73,6 +80,15 @@ HBITMAP hBattleBack;
 bool L_Mouse, R_Mouse;
 
 //cекция кода
+void LoadBar(Bar& b, const char* imagename, const char* imagenameglow, float x, float y, float w, float h) {
+    b.hBitmap = (HBITMAP)LoadImageA(NULL, imagename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    b.hBitmapGlow = (HBITMAP)LoadImageA(NULL, imagenameglow, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    b.height = w * window.height;
+    b.width = h * window.width;
+    b.x = window.width / 2 - b.width * x;
+    b.y = window.height / 2 + b.height * y;
+}
+
 void LoadButton(button &b, const char* imagename, const char* imagenameglow, float x, float y, float w, float h) {
     b.hBitmap = (HBITMAP)LoadImageA(NULL, imagename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     b.hBitmapGlow = (HBITMAP)LoadImageA(NULL, imagenameglow, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
@@ -97,7 +113,7 @@ void InitGame()
     LoadButton(DW_butt, "dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
     LoadButton(Enemy_butt, "Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .60, .25);
     LoadButton(Exit_butt, "Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -24, .02, .04);
-
+    LoadBar(Health_bar, "Health_bar.bmp", "Health_bar_glow.bmp", 1.65, 14.13,.2, .1);
 
     //splittedEnemy[1][1].hBitmap = (HBITMAP)LoadImageA(NULL, "enemy1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     srand(0);
@@ -265,6 +281,7 @@ void ShowTerminal() {
 }
 
 bool CheckCollisionMouseBattle(button b);
+bool CheckCollisionMouseBar(Bar bar);
 
 bool ShowButton(button &bt)
 {
@@ -272,6 +289,14 @@ bool ShowButton(button &bt)
     float offset = (float)pw_collision * sinf(timeGetTime() * .01);
     ShowBitmap(window.context, bt.x, bt.y + offset, bt.width, bt.height, pw_collision ? bt.hBitmapGlow : bt.hBitmap);
     return pw_collision;
+}
+
+bool ShowBar(Bar& bar)
+{ 
+    bool HealthStatus = CheckCollisionMouseBar(bar);
+    float offset = (float)HealthStatus * sinf(timeGetTime() * .01);
+    ShowBitmap(window.context, bar.x, bar.y + offset, bar.width, bar.height, HealthStatus ? bar.hBitmapGlow : bar.hBitmap);
+    return HealthStatus;
 }
 
 void ShowBattle() {
@@ -283,9 +308,17 @@ void ShowBattle() {
     bool dw = ShowButton(DW_butt);
     bool exit = ShowButton(Exit_butt);
     bool enemy = ShowButton(Enemy_butt);
+    bool Health_bar = ShowBar(Health_bar);
     if (L_Mouse)
     {
         if (pw)
+        {
+
+        }
+    }
+    if (L_Mouse)
+    {
+        if (Health_bar)
         {
 
         }
@@ -374,6 +407,16 @@ bool CheckCollisionMouseExit(button Exit_butt) {
 bool CheckCollisionMouseBattle(button b)
 {
     if (p.x < b.x + b.width && p.x > b.x && p.y < b.y + b.height && p.y > b.y)
+    {
+        return true;
+    }
+    return false;
+}
+
+// поменять на смену статтуса хп
+bool CheckCollisionMouseBar(Bar br)
+{
+    if (p.x < br.x + br.width && p.x > br.x && p.x < br.y + br.height && p.y > br.y)
     {
         return true;
     }
