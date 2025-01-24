@@ -85,8 +85,8 @@ void LoadBar(Bar& b, const char* imagename, const char* imagenameglow, float x, 
     b.hBitmapGlow = (HBITMAP)LoadImageA(NULL, imagenameglow, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     b.height = w * window.height;
     b.width = h * window.width;
-    b.x = window.width / 2 - b.width * x;
-    b.y = window.height / 2 + b.height * y;
+    b.x = window.width / 4 - b.width * x;
+    b.y = window.height / 4 + b.height * y;
 }
 
 void LoadButton(button &b, const char* imagename, const char* imagenameglow, float x, float y, float w, float h) {
@@ -113,7 +113,7 @@ void InitGame()
     LoadButton(DW_butt, "dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
     LoadButton(Enemy_butt, "Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .60, .25);
     LoadButton(Exit_butt, "Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -24, .02, .04);
-    LoadBar(Health_bar, "Health_bar.bmp", "Health_bar_glow.bmp", .5, .5, 2, 1);
+    LoadBar(Health_bar, "Health_bar.bmp", "Health_bar.bmp", 15, 15, .1, .1);
 
     //splittedEnemy[1][1].hBitmap = (HBITMAP)LoadImageA(NULL, "enemy1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     srand(0);
