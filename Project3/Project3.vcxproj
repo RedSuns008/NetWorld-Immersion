@@ -136,8 +136,8 @@
     <Image Include="..\Debug\Battlephon1.bmp" />
     <Image Include="..\Debug\dw_butt.bmp" />
     <Image Include="..\Debug\dw_butt_glow.bmp" />
-    <Image Include="..\Debug\enemy1.bmp" />
     <Image Include="..\Debug\enemycco.bmp" />
+    <Image Include="..\Debug\Enemy_butt.bmp" />
     <Image Include="..\Debug\exit_butt.bmp" />
     <Image Include="..\Debug\Health_bar.bmp" />
     <Image Include="..\Debug\lootchest.bmp" />
