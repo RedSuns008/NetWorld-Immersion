@@ -140,6 +140,8 @@
     <Image Include="..\Debug\Enemy_butt.bmp" />
     <Image Include="..\Debug\exit_butt.bmp" />
     <Image Include="..\Debug\Health_bar.bmp" />
+    <Image Include="..\Debug\Health_bar_back.bmp" />
+    <Image Include="..\Debug\Health_bar_front.bmp" />
     <Image Include="..\Debug\lootchest.bmp" />
     <Image Include="..\Debug\Lootphon1.bmp" />
     <Image Include="..\Debug\phon1.bmp" />
