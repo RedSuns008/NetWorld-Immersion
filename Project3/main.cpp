@@ -77,13 +77,11 @@ public:
 };
 
 Mouse_ Mouse;
-
-int HealthBar = 60;
-
-
+int Health = 60;
 
 class button {
 public:
+    int Health = 60;
     float x, y, width, height;
     HBITMAP hBitmap;//хэндл к спрайту шарика
     HBITMAP hBitmapGlow;
@@ -109,10 +107,10 @@ public:
         return pw_collision;
     }
 
-    bool CheckCollisionMouseHeal() {
+    bool CheckCollisionMouseHeal(int Health) {
         if (Mouse.L_butt) {
             if (Mouse.x < x + width && Mouse.x > x && Mouse.x < y + height && Mouse.y > y) {
-                HealthBar = HealthBar * 1.2;
+                Health = Health * 1.2;
                 return true;
             }
         }
@@ -125,6 +123,7 @@ public:
  
 class Bar {
 public:
+   
     float x, y, width, height, Health, Shield;
     HBITMAP hBitmapBack;
     HBITMAP hBitmapFront;
@@ -142,10 +141,9 @@ public:
      }
 
 
-
-    void Show() {
+    void Show(int Health) {
         ShowBitmap(window.context, x, y, width, height, hBitmapBack);
-        ShowBitmap(window.context, x, y, HealthBar / 100. * width, height, hBitmapFront);
+        ShowBitmap(window.context, x, y, Health / 100. * width, height, hBitmapFront);
     }
     bool CheckCollisionMouse()
     {
@@ -185,7 +183,7 @@ void InitGame()
     SW_butt.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
     DW_butt.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
     Enemy_butt.Load("Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .25, .60 );
-    Exit_butt.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -24, .02, .04);
+    Exit_butt.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
     Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
     Health_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.45, 33.7, .28, .01);
 
@@ -354,8 +352,8 @@ void ShowBattle() {
     bool exit = Exit_butt.Show();
     bool enemy = Enemy_butt.Show();
     bool HealButt = Heal_butt.Show();
-    bool Heal_Butt = Heal_butt.CheckCollisionMouseHeal();
-    Health_bar.Show();
+    bool Heal_Butt = Heal_butt.CheckCollisionMouseHeal(Health);
+    Health_bar.Show(Health);
 
 
     if (Mouse.L_butt)
