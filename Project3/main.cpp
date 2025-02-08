@@ -89,7 +89,6 @@ public:
     bool CheckCollisionMouse() {
         return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
     }
-
     void Load(const char* imagename, const char* imagenameglow, float x_, float y_, float w, float h) {
         x = x_; y = y_;
         hBitmap = (HBITMAP)LoadImageA(NULL, imagename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
@@ -112,6 +111,7 @@ public:
             if (Mouse.x < x + width && Mouse.x > x && Mouse.x < y + height && Mouse.y > y) {
                 Health = Health * 1.2;
                 return true;
+               
             }
         }
         return false;
@@ -164,7 +164,6 @@ HBITMAP hBattleBack;
 
 
 //cекция кода
-
 
 
 
@@ -294,7 +293,7 @@ void ProcessInput()
     if (GetAsyncKeyState(VK_RIGHT)) racket.x += racket.speed;
     if (GetAsyncKeyState(VK_UP)) racket.y -= racket.speed;
     if (GetAsyncKeyState(VK_DOWN)) racket.y += racket.speed;
-
+    if (GetAsyncKeyState(VK_LSHIFT)) Health = Health * 1.1;
     if (!game.action && GetAsyncKeyState(VK_SPACE))
     {
         game.action = true;
@@ -352,18 +351,9 @@ void ShowBattle() {
     bool exit = Exit_butt.Show();
     bool enemy = Enemy_butt.Show();
     bool HealButt = Heal_butt.Show();
-    bool Heal_Butt = Heal_butt.CheckCollisionMouseHeal(Health);
     Health_bar.Show(Health);
 
 
-    if (Mouse.L_butt)
-    {
-        if (pw)
-        {
-
-        }
-    }
-   
  }
 
 void ShowRacketAndBall()
@@ -495,6 +485,9 @@ void BattleGame() {
 
         if (DW_butt.CheckCollisionMouse()) {
             game_mode = GameMode::map;
+        }
+        if (Heal_butt.CheckCollisionMouseHeal(Health)) {
+           
         }
         if (Exit_butt.CheckCollisionMouse()) {
             game_mode = GameMode::map;
