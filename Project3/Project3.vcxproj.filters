@@ -77,5 +77,11 @@
     <Image Include="..\Debug\Health_bar_front.bmp">
       <Filter>res</Filter>
     </Image>
+    <Image Include="..\Debug\Shield_bar_back.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\Shield_bar_front.bmp">
+      <Filter>res</Filter>
+    </Image>
   </ItemGroup>
 </Project>

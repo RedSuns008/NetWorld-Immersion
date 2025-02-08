@@ -80,6 +80,9 @@ Mouse_ Mouse;
 int Health = 6000;
 int HealthMin = 0;
 int HealthMax = 10000;
+int Shield = 6000;
+int ShieldMin = 10;
+int ShieldMax = 10000;
 
 int clamp(int x, int minX, int maxX)
 {
@@ -138,7 +141,8 @@ public:
                 {
                     Health = Health + 1500;
                     Health = clamp(Health, HealthMin, HealthMax);
-
+                    Shield = Shield + 1500;
+                    Shield = clamp(Shield, ShieldMin, ShieldMax);
                     healStartTime = currentTime;
 
                     return true;
@@ -172,10 +176,14 @@ public:
         
      }
 
-
-    void Show(int Health) {
+   
+    void ShowHealth(int Health) {
         ShowBitmap(window.context, x, y, width, height, hBitmapBack);
         ShowBitmap(window.context, x, y, Health / (float)HealthMax * width, height, hBitmapFront);
+    }
+    void ShowShield(int Shield) {
+        ShowBitmap(window.context, x, y, width, height, hBitmapBack);
+        ShowBitmap(window.context, x, y, Shield / (float)ShieldMax * width, height, hBitmapFront);
     }
     bool CheckCollisionMouse()
     {
@@ -217,6 +225,7 @@ void InitGame()
     Exit_butt.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
     Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
     Health_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.45, 33.7, .28, .01);
+    Shield_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.45, 31.7, .28, .01);
 
     //splittedEnemy[1][1].hBitmap = (HBITMAP)LoadImageA(NULL, "enemy1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     srand(0);
@@ -383,7 +392,9 @@ void ShowBattle() {
     bool exit = Exit_butt.Show();
     bool enemy = Enemy_butt.Show();
     bool HealButt = Heal_butt.Show();
-    Health_bar.Show(Health);
+
+    Health_bar.ShowHealth(Health);
+    Shield_bar.ShowShield(Shield);
 
 
  }
@@ -540,6 +551,9 @@ void BattleGame() {
                 random = rand() % 1500;
                 Health = Health - random;
                 Health = clamp(Health, HealthMin, HealthMax);
+                random = (rand() % 1500) * 2;
+                Shield = Shield - random;
+                Shield = clamp(Shield, ShieldMin, ShieldMax);
 
                 AttackStartTime = currentTime;
             }

@@ -148,6 +148,8 @@
     <Image Include="..\Debug\pw_butt.bmp" />
     <Image Include="..\Debug\pw_butt_glow.bmp" />
     <Image Include="..\Debug\shar.bmp" />
+    <Image Include="..\Debug\Shield_bar_back.bmp" />
+    <Image Include="..\Debug\Shield_bar_front.bmp" />
     <Image Include="..\Debug\sw_butt.bmp" />
     <Image Include="..\Debug\sw_butt_glow.bmp" />
     <Image Include="..\Debug\terminal.bmp" />
