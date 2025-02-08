@@ -121,10 +121,8 @@ public:
         bool pw_collision = CheckCollisionMouse();
         float offset = (float)pw_collision * sinf(timeGetTime() * .008);
 
-        if (currentTime < healStartTime + healTime) {
-            offset = 0;
-        }
-        if (AttackcurrentTime < AttackStartTime + AttackTime) {
+        if ((currentTime < healStartTime + healTime) || (AttackcurrentTime < AttackStartTime + AttackTime))
+        {
             offset = 0;
         }
 
