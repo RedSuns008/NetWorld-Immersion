@@ -77,11 +77,29 @@ public:
 };
 
 Mouse_ Mouse;
-int Health = 60;
+int Health = 6000;
+int HealthMin = 0;
+int HealthMax = 10000;
+
+int clamp(int x, int minX, int maxX)
+{
+    return max(min(maxX, x), minX);
+}
+DWORD healStartTime = 0;
+DWORD healTime = 2000;
+DWORD currentTime = 0;
+
+
+DWORD AttackStartTime = 0;
+DWORD AttackTime = 1000;
+DWORD AttackcurrentTime = 0;
+
+
+
 
 class button {
 public:
-    int Health = 60;
+    
     float x, y, width, height;
     HBITMAP hBitmap;//хэндл к спрайту шарика
     HBITMAP hBitmapGlow;
@@ -101,22 +119,36 @@ public:
 
     bool Show() {
         bool pw_collision = CheckCollisionMouse();
-        float offset = (float)pw_collision * sinf(timeGetTime() * .01);
+        float offset = (float)pw_collision * sinf(timeGetTime() * .008);
+
+        if (currentTime < healStartTime + healTime)
+        {
+            offset = 0;
+        }
+
         ShowBitmap(window.context, x, y + offset, width, height, pw_collision ? hBitmapGlow : hBitmap);
         return pw_collision;
     }
 
-    bool CheckCollisionMouseHeal(int Health) {
+    bool CheckCollisionMouseHeal() {
         if (Mouse.L_butt) {
-            if (Mouse.x < x + width && Mouse.x > x && Mouse.x < y + height && Mouse.y > y) {
-                Health = Health * 1.2;
-                return true;
+            if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y) 
+            {
+                if (currentTime > healStartTime + healTime)
+                {
+                    Health = Health + 1500;
+                    Health = clamp(Health, HealthMin, HealthMax);
+
+                    healStartTime = currentTime;
+
+                    return true;
+                }
                
             }
         }
         return false;
     }
-
+    
 };
 
 
@@ -143,7 +175,7 @@ public:
 
     void Show(int Health) {
         ShowBitmap(window.context, x, y, width, height, hBitmapBack);
-        ShowBitmap(window.context, x, y, Health / 100. * width, height, hBitmapFront);
+        ShowBitmap(window.context, x, y, Health / (float)HealthMax * width, height, hBitmapFront);
     }
     bool CheckCollisionMouse()
     {
@@ -293,7 +325,7 @@ void ProcessInput()
     if (GetAsyncKeyState(VK_RIGHT)) racket.x += racket.speed;
     if (GetAsyncKeyState(VK_UP)) racket.y -= racket.speed;
     if (GetAsyncKeyState(VK_DOWN)) racket.y += racket.speed;
-    if (GetAsyncKeyState(VK_LSHIFT)) Health = Health * 1.1;
+    
     if (!game.action && GetAsyncKeyState(VK_SPACE))
     {
         game.action = true;
@@ -467,6 +499,7 @@ void InitWindow()
     GetClientRect(window.hWnd, &r);
 
 }
+double random = 1;
 void BattleGame() {
 
     ShowBattle();//рисуем фон 
@@ -475,18 +508,43 @@ void BattleGame() {
     if (Mouse.L_butt)
     {
         if (PW_butt.CheckCollisionMouse()) {
+            if (AttackcurrentTime > AttackStartTime + AttackTime)
+            {
+                //game_mode = GameMode::map;
+                srand(random);
+                random = rand() % 500;
+                Health = Health - random;
+                Health = clamp(Health, HealthMin, HealthMax);
 
-            game_mode = GameMode::map;
-
+                AttackStartTime = currentTime;
+            }                       
         }
         if (SW_butt.CheckCollisionMouse()) {
-            game_mode = GameMode::map;
+            if (AttackcurrentTime > AttackStartTime + AttackTime)
+            {
+                //game_mode = GameMode::map;
+                srand(random);
+                random = rand() % 700;
+                Health = Health - random;
+                Health = clamp(Health, HealthMin, HealthMax);
+
+                AttackStartTime = currentTime;
+            }
         }
 
         if (DW_butt.CheckCollisionMouse()) {
-            game_mode = GameMode::map;
+            if (AttackcurrentTime > AttackStartTime + AttackTime)
+            {
+                //game_mode = GameMode::map;
+                srand(random);
+                random = rand() % 1500;
+                Health = Health - random;
+                Health = clamp(Health, HealthMin, HealthMax);
+
+                AttackStartTime = currentTime;
+            }
         }
-        if (Heal_butt.CheckCollisionMouseHeal(Health)) {
+        if (Heal_butt.CheckCollisionMouseHeal()) {
            
         }
         if (Exit_butt.CheckCollisionMouse()) {
@@ -557,8 +615,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     while (!GetAsyncKeyState(VK_ESCAPE))
     {
-
-      
+        currentTime = timeGetTime();
+        AttackcurrentTime = timeGetTime();
         Mouse.Update();
         
         switch (game_mode) {
