@@ -52,35 +52,155 @@ struct {
 } window;
 
 
-POINT p;
-
 enum class GameMode { map, battle, loot, terminal };
-GameMode game_mode = GameMode::map;
+GameMode game_mode = GameMode::battle;
+
+void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
+
+class  Mouse_ {
+public:
+    float x, y;
+    bool L_butt, R_butt;
+
+    void  Update() {
+        POINT p;
+        GetCursorPos(&p);
+        ScreenToClient(window.hWnd, &p);
+        x = p.x;    
+        y = p.y;
+
+        L_butt = GetAsyncKeyState(VK_LBUTTON);
+        R_butt = GetAsyncKeyState(VK_RBUTTON);
+    }
 
 
-typedef struct {
+};
+
+Mouse_ Mouse;
+int Health = 6000;
+int HealthMin = 0;
+int HealthMax = 10000;
+
+int clamp(int x, int minX, int maxX)
+{
+    return max(min(maxX, x), minX);
+}
+DWORD healStartTime = 0;
+DWORD healTime = 2000;
+DWORD currentTime = 0;
+
+
+DWORD AttackStartTime = 0;
+DWORD AttackTime = 1000;
+DWORD AttackcurrentTime = 0;
+
+
+
+
+class button {
+public:
+    
     float x, y, width, height;
     HBITMAP hBitmap;//хэндл к спрайту шарика
     HBITMAP hBitmapGlow;
-} button;
+
+    bool CheckCollisionMouse() {
+        return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
+    }
+    void Load(const char* imagename, const char* imagenameglow, float x_, float y_, float w, float h) {
+        x = x_; y = y_;
+        hBitmap = (HBITMAP)LoadImageA(NULL, imagename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+        hBitmapGlow = (HBITMAP)LoadImageA(NULL, imagenameglow, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+        height = h * window.height;
+        width = w * window.width;
+        x = window.width / 2 - width * x;
+        y = window.height / 2 + height * y;
+    }
+
+    bool Show() {
+        bool pw_collision = CheckCollisionMouse();
+        float offset = (float)pw_collision * sinf(timeGetTime() * .008);
+
+        if (currentTime < healStartTime + healTime) {
+            offset = 0;
+        }
+        if (AttackcurrentTime < AttackStartTime + AttackTime) {
+            offset = 0;
+        }
+
+        ShowBitmap(window.context, x, y + offset, width, height, pw_collision ? hBitmapGlow : hBitmap);
+        return pw_collision;
+    }
+
+    bool CheckCollisionMouseHeal() {
+        if (Mouse.L_butt) {
+            if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y) 
+            {
+                if (currentTime > healStartTime + healTime)
+                {
+                    Health = Health + 1500;
+                    Health = clamp(Health, HealthMin, HealthMax);
+
+                    healStartTime = currentTime;
+
+                    return true;
+                }
+               
+            }
+        }
+        return false;
+    }
+    
+};
 
 
-button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt;
+ 
+class Bar {
+public:
+   
+    float x, y, width, height, Health, Shield;
+    HBITMAP hBitmapBack;
+    HBITMAP hBitmapFront;
+    
+
+    void Load(const char* imagenameBack, const char* imagenameFront, float x_, float y_, float w, float h) {
+        x = x_; y = y_;
+        hBitmapBack = (HBITMAP)LoadImageA(NULL, imagenameBack, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+        hBitmapFront = (HBITMAP)LoadImageA(NULL, imagenameFront, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+        height = h * window.height;
+        width = w * window.width;
+        x = window.width / 2 - width * x;
+        y = window.height / 2 + height * y;
+        
+     }
+
+
+    void Show(int Health) {
+        ShowBitmap(window.context, x, y, width, height, hBitmapBack);
+        ShowBitmap(window.context, x, y, Health / (float)HealthMax * width, height, hBitmapFront);
+    }
+    bool CheckCollisionMouse()
+    {
+        return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
+    }
+
+   
+};
+
+
+Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar;
+
+button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt, Heal_butt;
 HBITMAP hBack;// хэндл для фонового изображения
 HBITMAP hBattleBack;
 
 
-bool L_Mouse, R_Mouse;
+
 
 //cекция кода
-void LoadButton(button &b, const char* imagename, const char* imagenameglow, float x, float y, float w, float h) {
-    b.hBitmap = (HBITMAP)LoadImageA(NULL, imagename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    b.hBitmapGlow = (HBITMAP)LoadImageA(NULL, imagenameglow, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    b.height = w*window.height;
-    b.width = h*window.width;
-    b.x = window.width / 2 - b.width * x;
-    b.y = window.height / 2 + b.height * y;
- }
+
+
+
 
 void InitGame()
 {
@@ -92,12 +212,13 @@ void InitGame()
 
     // доделать
     
-    LoadButton(PW_butt, "pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
-    LoadButton(SW_butt, "sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
-    LoadButton(DW_butt, "dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
-    LoadButton(Enemy_butt, "Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .60, .25);
-    LoadButton(Exit_butt, "Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -24, .02, .04);
-
+    PW_butt.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
+    SW_butt.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
+    DW_butt.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
+    Enemy_butt.Load("Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .25, .60 );
+    Exit_butt.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
+    Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
+    Health_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.45, 33.7, .28, .01);
 
     //splittedEnemy[1][1].hBitmap = (HBITMAP)LoadImageA(NULL, "enemy1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     srand(0);
@@ -206,18 +327,7 @@ void ProcessInput()
     if (GetAsyncKeyState(VK_RIGHT)) racket.x += racket.speed;
     if (GetAsyncKeyState(VK_UP)) racket.y -= racket.speed;
     if (GetAsyncKeyState(VK_DOWN)) racket.y += racket.speed;
-    if (GetAsyncKeyState(VK_LBUTTON)) {
-        L_Mouse = true;
-    }
-    else {
-        L_Mouse = false;
-    }
-    if (GetAsyncKeyState(VK_RBUTTON)) {
-        R_Mouse = true;
-    }
-    else {
-        R_Mouse = false;
-    }
+    
     if (!game.action && GetAsyncKeyState(VK_SPACE))
     {
         game.action = true;
@@ -225,7 +335,7 @@ void ProcessInput()
     }
 }
 
-void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false)
+void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha)
 {
     HBITMAP hbm, hOldbm;
     HDC hMemDC;
@@ -264,32 +374,19 @@ void ShowTerminal() {
     ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
 }
 
-bool CheckCollisionMouseBattle(button b);
-
-bool ShowButton(button &bt)
-{
-    bool pw_collision = CheckCollisionMouseBattle(bt);
-    float offset = (float)pw_collision * sinf(timeGetTime() * .01);
-    ShowBitmap(window.context, bt.x, bt.y + offset, bt.width, bt.height, pw_collision ? bt.hBitmapGlow : bt.hBitmap);
-    return pw_collision;
-}
 
 void ShowBattle() {
   
     ShowBitmap(window.context, 0, 0, window.width, window.height, hBattleBack);//задний фон
 
-    bool pw = ShowButton(PW_butt);
-    bool sw = ShowButton(SW_butt);
-    bool dw = ShowButton(DW_butt);
-    bool exit = ShowButton(Exit_butt);
-    bool enemy = ShowButton(Enemy_butt);
-    if (L_Mouse)
-    {
-        if (pw)
-        {
+    bool pw = PW_butt.Show();
+    bool sw = SW_butt.Show();
+    bool dw = DW_butt.Show();
+    bool exit = Exit_butt.Show();
+    bool enemy = Enemy_butt.Show();
+    bool HealButt = Heal_butt.Show();
+    Health_bar.Show(Health);
 
-        }
-    }
 
  }
 
@@ -305,7 +402,7 @@ void ShowRacketAndBall()
     {
         enemy.x = ball.x * .1 + enemy.x * .9;
     }
-    ShowBitmap(window.context, p.x, p.y, ball.rad, ball.rad, ball.hBitmap);
+    ShowBitmap(window.context, Mouse.x, Mouse.y, ball.rad, ball.rad, ball.hBitmap);
 }
 
 void LimitRacket()
@@ -352,8 +449,8 @@ bool CheckCollision(racket_type r, enemycco e)
 
 bool CheckCollisionMouse(enemycco e)
 {
-    auto dx = p.x - e.x;
-    auto dy = p.y - e.y;
+    auto dx = Mouse.x - e.x;
+    auto dy = Mouse.y - e.y;
     auto dxy = sqrt(dx * dx + dy * dy);
 
     if (dxy < (dxy + e.height) / 2.)
@@ -363,65 +460,6 @@ bool CheckCollisionMouse(enemycco e)
     return false;
 }
 
-bool CheckCollisionMouseExit(button Exit_butt) {
-    if (p.x < Exit_butt.x + Exit_butt.width && p.x > Exit_butt.x && p.y < Exit_butt.y + Exit_butt.height && p.y > Exit_butt.y)
-    {
-        return true;
-    }
-    return false;
-}
-
-bool CheckCollisionMouseBattle(button b)
-{
-    if (p.x < b.x + b.width && p.x > b.x && p.y < b.y + b.height && p.y > b.y)
-    {
-        return true;
-    }
-    return false;
-}
-
-void CheckFloor()
-{
-    if (ball.y > window.height - ball.rad - racket.height)//шарик пересек линию отскока - горизонталь ракетки
-    {
-        if (!tail && ball.x >= racket.x - racket.width / 2. - ball.rad && ball.x <= racket.x + racket.width / 2. + ball.rad)//шарик отбит, и мы не в режиме обработки хвоста
-        {
-            game.score++;//за каждое отбитие даем одно очко
-            ball.speed += 5. / game.score;//но увеличиваем сложность - прибавляем скорости шарику
-            ball.dy *= -1;//отскок
-            racket.width -= 10. / game.score;//дополнительно уменьшаем ширину ракетки - для сложности
-            ProcessSound("knopka-voda-vyisokii-rezkii.wav");//играем звук отскока
-        }
-        else
-        {//шарик не отбит
-
-            tail = true;//дадим шарику упасть ниже ракетки
-
-            if (ball.y - ball.rad > window.height)//если шарик ушел за пределы окна
-            {
-                game.balls--;//уменьшаем количество "жизней"
-
-                ProcessSound("fail.wav");//играем звук
-
-                if (game.balls < 0) { //проверка условия окончания "жизней"
-
-                    MessageBoxA(window.hWnd, "game over", "", MB_OK);//выводим сообщение о проигрыше
-                    InitGame();//переинициализируем игру
-                }
-
-                ball.dy = (rand() % 65 + 35) / 100.;//задаем новый случайный вектор для шарика
-                ball.dx = -(1 - ball.dy);
-                ball.x = racket.x;//инициализируем координаты шарика - ставим его на ракетку
-                ball.y = racket.y - ball.rad;
-                game.action = false;//приостанавливаем игру, пока игрок не нажмет пробел
-                tail = false;
-            }
-        }
-    }
-}
-
-
-
 
 
 void ProcessRoom()
@@ -429,7 +467,6 @@ void ProcessRoom()
     //обрабатываем стены, потолок и пол. принцип - угол падения равен углу отражения, а значит, для отскока мы можем просто инвертировать часть вектора движения шарика
     CheckWalls();
     CheckRoof();
-    CheckFloor();
 
     for (int i = 0; i < enemycout; i++) {
         if (CheckCollision(racket, enemy1[i]) == true) {
@@ -447,20 +484,7 @@ void ProcessRoom()
     }
 }
 
-void ProcessBall()
-{
-    if (game.action)
-    {
-        //если игра в активном режиме - перемещаем шарик
-        ball.x += ball.dx * ball.speed;
-        ball.y += ball.dy * ball.speed;
-    }
-    else
-    {
-        //иначе - шарик "приклеен" к ракетке
-        ball.x = racket.x;
-    }
-}
+
 
 void InitWindow()
 {
@@ -477,33 +501,63 @@ void InitWindow()
     GetClientRect(window.hWnd, &r);
 
 }
+double random = 1;
 void BattleGame() {
 
     ShowBattle();//рисуем фон 
-
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
-    if (L_Mouse)
+    if (Mouse.L_butt)
     {
-        if (CheckCollisionMouseBattle(PW_butt)) {
+        if (PW_butt.CheckCollisionMouse()) {
+            if (AttackcurrentTime > AttackStartTime + AttackTime)
+            {
+                //game_mode = GameMode::map;
+                srand(random);
+                random = rand() % 500;
+                Health = Health - random;
+                Health = clamp(Health, HealthMin, HealthMax);
 
-            game_mode = GameMode::map;
+                AttackStartTime = currentTime;
+            }                       
+        }
+        if (SW_butt.CheckCollisionMouse()) {
+            if (AttackcurrentTime > AttackStartTime + AttackTime)
+            {
+                //game_mode = GameMode::map;
+                srand(random);
+                random = rand() % 700;
+                Health = Health - random;
+                Health = clamp(Health, HealthMin, HealthMax);
 
-        }
-        if (CheckCollisionMouseBattle(SW_butt)) {
-            game_mode = GameMode::map;
+                AttackStartTime = currentTime;
+            }
         }
 
-        if (CheckCollisionMouseBattle(DW_butt)) {
-            game_mode = GameMode::map;
+        if (DW_butt.CheckCollisionMouse()) {
+            if (AttackcurrentTime > AttackStartTime + AttackTime)
+            {
+                //game_mode = GameMode::map;
+                srand(random);
+                random = rand() % 1500;
+                Health = Health - random;
+                Health = clamp(Health, HealthMin, HealthMax);
+
+                AttackStartTime = currentTime;
+            }
         }
-        if (CheckCollisionMouseBattle(Exit_butt)) {
+        if (Heal_butt.CheckCollisionMouseHeal()) {
+           
+        }
+        if (Exit_butt.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
 
     }
     ProcessInput();//опрос клавиатуры
     LimitRacket();
+
+
 
 }
 
@@ -530,7 +584,7 @@ void MapGame() {
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду)
     for (int i = 0; i < enemycout; i++) {
-        if (L_Mouse == true) {
+        if (Mouse.L_butt) {
             if (CheckCollisionMouse(enemy1[i]))
             {
                 if (enemy1[i].type == entity::lootchest) {
@@ -563,10 +617,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     while (!GetAsyncKeyState(VK_ESCAPE))
     {
-
-        GetCursorPos(&p);
-
-        ScreenToClient(window.hWnd, &p);
+        currentTime = timeGetTime();
+        AttackcurrentTime = timeGetTime();
+        Mouse.Update();
+        
         switch (game_mode) {
         case GameMode::map: MapGame(); break;
         case GameMode::battle: BattleGame(); break;

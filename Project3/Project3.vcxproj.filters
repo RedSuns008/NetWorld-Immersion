@@ -32,9 +32,6 @@
     <Image Include="..\Debug\dw_butt_glow.bmp">
       <Filter>res</Filter>
     </Image>
-    <Image Include="..\Debug\enemy1.bmp">
-      <Filter>res</Filter>
-    </Image>
     <Image Include="..\Debug\enemycco.bmp">
       <Filter>res</Filter>
     </Image>
@@ -68,10 +65,16 @@
     <Image Include="..\Debug\terminal.bmp">
       <Filter>res</Filter>
     </Image>
-    <Image Include="..\Debug\Health_bar.bmp">
+    <Image Include="..\Debug\Enemy_butt.bmp">
       <Filter>res</Filter>
     </Image>
-    <Image Include="..\Debug\Shield_bar.bmp">
+    <Image Include="..\Debug\Heal_butt.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\Health_bar_back.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\Debug\Health_bar_front.bmp">
       <Filter>res</Filter>
     </Image>
   </ItemGroup>
