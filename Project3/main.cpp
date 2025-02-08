@@ -53,7 +53,7 @@ struct {
 
 
 enum class GameMode { map, battle, loot, terminal };
-GameMode game_mode = GameMode::battle;
+GameMode game_mode = GameMode::map;
 
 void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
 
