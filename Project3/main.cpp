@@ -81,8 +81,9 @@ int Health = 6000;
 int HealthMin = 0;
 int HealthMax = 10000;
 int Shield = 6000;
-int ShieldMin = 10;
-int ShieldMax = 10000;
+int ShieldMin = 0;
+int ShieldMax = 50000;
+int Shield_bonus = 2; // rework shield_bonus system
 
 int clamp(int x, int minX, int maxX)
 {
@@ -141,7 +142,7 @@ public:
                 {
                     Health = Health + 1500;
                     Health = clamp(Health, HealthMin, HealthMax);
-                    Shield = Shield + 1500;
+                    Shield = (Shield + 1500) * Shield_bonus;
                     Shield = clamp(Shield, ShieldMin, ShieldMax);
                     healStartTime = currentTime;
 
@@ -526,7 +527,9 @@ void BattleGame() {
                 random = rand() % 500;
                 Health = Health - random;
                 Health = clamp(Health, HealthMin, HealthMax);
-
+                random = (rand() % 600) * 2;
+                Shield = Shield - random;
+                Shield = clamp(Shield, ShieldMin, ShieldMax);
                 AttackStartTime = currentTime;
             }                       
         }
@@ -538,7 +541,9 @@ void BattleGame() {
                 random = rand() % 700;
                 Health = Health - random;
                 Health = clamp(Health, HealthMin, HealthMax);
-
+                random = (rand() % 1500) * 2;
+                Shield = Shield - random;
+                Shield = clamp(Shield, ShieldMin, ShieldMax);
                 AttackStartTime = currentTime;
             }
         }
@@ -551,7 +556,7 @@ void BattleGame() {
                 random = rand() % 1500;
                 Health = Health - random;
                 Health = clamp(Health, HealthMin, HealthMax);
-                random = (rand() % 1500) * 2;
+                random = (rand() % 3000) * 2;
                 Shield = Shield - random;
                 Shield = clamp(Shield, ShieldMin, ShieldMax);
 
