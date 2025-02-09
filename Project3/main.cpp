@@ -53,7 +53,7 @@ struct {
 
 
 enum class GameMode { map, battle, loot, terminal };
-GameMode game_mode = GameMode::map;
+GameMode game_mode = GameMode::battle;
 
 void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
 
@@ -79,11 +79,19 @@ public:
 Mouse_ Mouse;
 int Health = 6000;
 int HealthMin = 0;
-int HealthMax = 10000;
+int HealthMax = 50000;
 int Shield = 6000;
 int ShieldMin = 0;
 int ShieldMax = 50000;
 int Shield_bonus = 2; // rework shield_bonus system
+
+int HealthEnemy = 40000;
+int HealthEnemyMin = 0;
+int HealthEnemyMax = 50000;
+int ShieldEnemy = 40000;
+int ShieldEnemyMin = 0;
+int ShieldEnemyMax = 50000;
+int ShieldEnemy_bonus = 20; // rework shield_bonus system
 
 int clamp(int x, int minX, int maxX)
 {
@@ -227,6 +235,8 @@ void InitGame()
     Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
     Health_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.45, 33.7, .28, .01);
     Shield_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.45, 31.7, .28, .01);
+    ShieldEnemy_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.4, -42.4, .28, .01);
+    HealthEnemy_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.4, -40.4, .28, .01);
 
     //splittedEnemy[1][1].hBitmap = (HBITMAP)LoadImageA(NULL, "enemy1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     srand(0);
@@ -396,8 +406,8 @@ void ShowBattle() {
 
     Health_bar.ShowHealth(Health);
     Shield_bar.ShowShield(Shield);
-
-
+    ShieldEnemy_bar.ShowShield(ShieldEnemy);
+    HealthEnemy_bar.ShowHealth(HealthEnemy);
  }
 
 void ShowRacketAndBall()
@@ -530,6 +540,13 @@ void BattleGame() {
                 random = (rand() % 600) * 2;
                 Shield = Shield - random;
                 Shield = clamp(Shield, ShieldMin, ShieldMax);
+
+                random = (rand() % 4000) * 2;
+                HealthEnemy = HealthEnemy - random;
+                HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
+                random = (rand() % 6000) * 2;
+                ShieldEnemy = ShieldEnemy - random;
+                ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
                 AttackStartTime = currentTime;
             }                       
         }
