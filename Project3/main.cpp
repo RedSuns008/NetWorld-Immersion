@@ -53,7 +53,7 @@ struct {
 
 
 enum class GameMode { map, battle, loot, terminal };
-GameMode game_mode = GameMode::battle;
+GameMode game_mode = GameMode::map;
 
 void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
 
@@ -202,14 +202,26 @@ public:
    
 };
 
+/*class  DW {
+public:
+    float x, y, width, height, Damage, Crit_Chance, Crit_Damge;
+   
+    void  Nay() {
+       
+    }
+
+
+};
+*/
+
 
 Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar;
-
-button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt, Heal_butt;
+//DW DW_1, DW_2, DW_3;
+button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt, Heal_butt,  Inventory_butt;
 HBITMAP hBack;// хэндл для фонового изображения
 HBITMAP hBattleBack;
-
-
+HBITMAP InventoryhBack;
+HBITMAP TerminalhBack;
 
 
 //cекция кода
@@ -225,20 +237,20 @@ void InitGame()
     ball.hBitmap = (HBITMAP)LoadImageA(NULL, "shar.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     racket.hBitmap = (HBITMAP)LoadImageA(NULL, "raketka.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-    // доделать
-    
+    //DW_1    
     PW_butt.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
     SW_butt.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
     DW_butt.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
     Enemy_butt.Load("Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .25, .60 );
     Exit_butt.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
     Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
+    Inventory_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", 3.65, 5.12, .07, .07);
     Health_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.45, 33.7, .28, .01);
     Shield_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.45, 31.7, .28, .01);
     ShieldEnemy_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.4, -42.4, .28, .01);
     HealthEnemy_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.4, -40.4, .28, .01);
 
-    //splittedEnemy[1][1].hBitmap = (HBITMAP)LoadImageA(NULL, "enemy1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+   
     srand(0);
 
 
@@ -290,10 +302,9 @@ void InitGame()
     enemy.hBitmap = (HBITMAP)LoadImageA(NULL, "raketka.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     hBack = (HBITMAP)LoadImageA(NULL, "phon1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     hBattleBack = (HBITMAP)LoadImageA(NULL, "Battlephon1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    //------------------------------------------------------
+    InventoryhBack = (HBITMAP)LoadImageA(NULL, "InventoryhBack.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    TerminalhBack = (HBITMAP)LoadImageA(NULL, "Terminalphon1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-   // splittedEnemy[3][3].width = 150;
-   // splittedEnemy[3][3].height = 100;
 
     racket.width = 50;
     racket.height = 50;
@@ -382,13 +393,22 @@ void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool
 }
 
 
+
+
+void ShowInventory() {
+    ShowBitmap(window.context, 0, 0, window.width / 2., window.height / 2., InventoryhBack);//задний фон
+   
+}
+
 void ShowLoot() {
-    ShowBitmap(window.context, 0, 0, window.width, window.height, hBack);//задний фон
+    ShowBitmap(window.context, 0, 0, window.width, window.height, InventoryhBack);//задний фон
+    bool exit = Exit_butt.Show();
     ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
 }
 
 void ShowTerminal() {
-    ShowBitmap(window.context, 0, 0, window.width, window.height, hBack);//задний фон
+    ShowBitmap(window.context, 0, 0, window.width, window.height, TerminalhBack);//задний фон
+    bool exit = Exit_butt.Show();
     ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
 }
 
@@ -403,11 +423,14 @@ void ShowBattle() {
     bool exit = Exit_butt.Show();
     bool enemy = Enemy_butt.Show();
     bool HealButt = Heal_butt.Show();
+    bool InventoryButt = Inventory_butt.Show();
 
     Health_bar.ShowHealth(Health);
     Shield_bar.ShowShield(Shield);
     ShieldEnemy_bar.ShowShield(ShieldEnemy);
     HealthEnemy_bar.ShowHealth(HealthEnemy);
+
+
  }
 
 void ShowRacketAndBall()
@@ -530,8 +553,7 @@ void BattleGame() {
     if (Mouse.L_butt)
     {
         if (PW_butt.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime)
-            {
+            if (AttackcurrentTime > AttackStartTime + AttackTime) {
                 //game_mode = GameMode::map;
                 srand(random);
                 random = rand() % 500;
@@ -551,8 +573,7 @@ void BattleGame() {
             }                       
         }
         if (SW_butt.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime)
-            {
+            if (AttackcurrentTime > AttackStartTime + AttackTime) {
                 //game_mode = GameMode::map;
                 srand(random);
                 random = rand() % 700;
@@ -566,8 +587,7 @@ void BattleGame() {
         }
 
         if (DW_butt.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime)
-            {
+            if (AttackcurrentTime > AttackStartTime + AttackTime)  {
                 //game_mode = GameMode::map;
                 srand(random);
                 random = rand() % 1500;
@@ -583,6 +603,10 @@ void BattleGame() {
         if (Heal_butt.CheckCollisionMouseHeal()) {
            
         }
+        if (Inventory_butt.CheckCollisionMouse()) {
+            ShowInventory();
+        }
+
         if (Exit_butt.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
@@ -591,8 +615,6 @@ void BattleGame() {
     ProcessInput();//опрос клавиатуры
     LimitRacket();
 
-
-
 }
 
 void TerminalGame() {
@@ -600,15 +622,25 @@ void TerminalGame() {
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);
     Sleep(20);
     ProcessInput();
+    if (Mouse.L_butt) {
+        if (Exit_butt.CheckCollisionMouse()) {
+            game_mode = GameMode::map;
+        }
+    }
 }
 
 void LootGame() {
     ShowLoot();
+    
     ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
     ProcessInput();//опрос клавиатуры
-
+    if (Mouse.L_butt) {
+        if (Exit_butt.CheckCollisionMouse()) {
+            game_mode = GameMode::map;
+        }
+    }
 }
 
 
