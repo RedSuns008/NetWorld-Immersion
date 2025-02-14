@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project3", "Project3\Project3.vcxproj", "{4031E865-2FCB-40C3-9E1F-DFC78A91D887}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetWorld-Immersion", "NetWorld-Immersion\NetWorld-Immersion.vcxproj", "{4031E865-2FCB-40C3-9E1F-DFC78A91D887}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
