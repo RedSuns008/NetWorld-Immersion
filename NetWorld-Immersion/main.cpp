@@ -128,6 +128,14 @@ public:
         x = window.width / 2 - width * x;
         y = window.height / 2 + height * y;
     }
+    void LoadInv(const char* imagename, float x_, float y_, float w, float h) {
+        x = x_; y = y_;
+        hBitmap = (HBITMAP)LoadImageA(NULL, imagename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+        height = h * window.height;
+        width = w * window.width;
+        x = window.width / 2 - width * x;
+        y = window.height / 2 + height * y;
+    }
 
     bool Show() {
         bool pw_collision = CheckCollisionMouse();
@@ -139,6 +147,11 @@ public:
         }
 
         ShowBitmap(window.context, x, y + offset, width, height, pw_collision ? hBitmapGlow : hBitmap);
+        return pw_collision;
+    }
+    bool ShowInv() {
+        bool pw_collision = CheckCollisionMouse();
+        ShowBitmap(window.context, x, y, width, height, hBitmap);
         return pw_collision;
     }
 
@@ -216,8 +229,8 @@ public:
 
 
 Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar;
-//DW DW_1, DW_2, DW_3;
-button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt, Heal_butt,  Inventory_butt;
+
+button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt, Heal_butt,  Inventory_butt, BackPack__inventory_butt, Boots__inventory_butt;
 HBITMAP hBack;// хэндл для фонового изображения
 HBITMAP hBattleBack;
 HBITMAP InventoryhBack;
@@ -245,6 +258,8 @@ void InitGame()
     Exit_butt.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
     Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
     Inventory_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", 3.65, 5.12, .07, .07);
+    Boots__inventory_butt.LoadInv("Boots__inventory_butt.bmp", 0.5, 3., .4, .07);
+
     Health_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.45, 33.7, .28, .01);
     Shield_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.45, 31.7, .28, .01);
     ShieldEnemy_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.4, -42.4, .28, .01);
@@ -397,12 +412,13 @@ void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool
 
 void ShowInventory() {
     ShowBitmap(window.context, 0, 0, window.width / 2., window.height / 2., InventoryhBack);//задний фон
-   
+    bool BootsInventory = Boots__inventory_butt.ShowInv();
 }
 
 void ShowLoot() {
     ShowBitmap(window.context, 0, 0, window.width, window.height, InventoryhBack);//задний фон
     bool exit = Exit_butt.Show();
+    bool BootsInventory = Boots__inventory_butt.Show();
     ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
 }
 

@@ -64,6 +64,39 @@
     <Image Include="..\Debug\terminal.bmp">
       <Filter>Res</Filter>
     </Image>
+    <Image Include="..\Debug\BackPack__inventory_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Boots__inventory_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Boots__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\dw__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\FastSlot1_inventory_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\FastSlot1_inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\helmet__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\LowerArmor__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\pw__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\sw__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\UpperArmor__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Res">

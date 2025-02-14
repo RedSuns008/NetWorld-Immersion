@@ -133,26 +133,37 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\Debug\BackPack__inventory_butt.bmp" />
     <Image Include="..\Debug\Battlephon1.bmp" />
+    <Image Include="..\Debug\Boots__inventory_butt.bmp" />
+    <Image Include="..\Debug\Boots__inventory_butt.png" />
     <Image Include="..\Debug\dw_butt.bmp" />
     <Image Include="..\Debug\dw_butt_glow.bmp" />
+    <Image Include="..\Debug\dw__inventory_butt.png" />
     <Image Include="..\Debug\enemycco.bmp" />
     <Image Include="..\Debug\Enemy_butt.bmp" />
     <Image Include="..\Debug\exit_butt.bmp" />
+    <Image Include="..\Debug\FastSlot1_inventory_butt.bmp" />
+    <Image Include="..\Debug\FastSlot1_inventory_butt.png" />
     <Image Include="..\Debug\Health_bar_back.bmp" />
     <Image Include="..\Debug\Health_bar_front.bmp" />
     <Image Include="..\Debug\Heal_butt.bmp" />
+    <Image Include="..\Debug\helmet__inventory_butt.png" />
     <Image Include="..\Debug\lootchest.bmp" />
     <Image Include="..\Debug\Lootphon1.bmp" />
+    <Image Include="..\Debug\LowerArmor__inventory_butt.png" />
     <Image Include="..\Debug\phon1.bmp" />
     <Image Include="..\Debug\pw_butt.bmp" />
     <Image Include="..\Debug\pw_butt_glow.bmp" />
+    <Image Include="..\Debug\pw__inventory_butt.png" />
     <Image Include="..\Debug\shar.bmp" />
     <Image Include="..\Debug\Shield_bar_back.bmp" />
     <Image Include="..\Debug\Shield_bar_front.bmp" />
     <Image Include="..\Debug\sw_butt.bmp" />
     <Image Include="..\Debug\sw_butt_glow.bmp" />
+    <Image Include="..\Debug\sw__inventory_butt.png" />
     <Image Include="..\Debug\terminal.bmp" />
+    <Image Include="..\Debug\UpperArmor__inventory_butt.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
