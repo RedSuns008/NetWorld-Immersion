@@ -598,6 +598,13 @@ void BattleGame() {
                 random = (rand() % 1500) * 2;
                 Shield = Shield - random;
                 Shield = clamp(Shield, ShieldMin, ShieldMax);
+
+                random = (rand() % 8000) * 2;
+                HealthEnemy = HealthEnemy - random;
+                HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
+                random = (rand() % 12000) * 2;
+                ShieldEnemy = ShieldEnemy - random;
+                ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
                 AttackStartTime = currentTime;
             }
         }
@@ -612,6 +619,13 @@ void BattleGame() {
                 random = (rand() % 3000) * 2;
                 Shield = Shield - random;
                 Shield = clamp(Shield, ShieldMin, ShieldMax);
+
+                random = (rand() % 20000) * 2;
+                HealthEnemy = HealthEnemy - random;
+                HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
+                random = (rand() % 10000) * 2;
+                ShieldEnemy = ShieldEnemy - random;
+                ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
 
                 AttackStartTime = currentTime;
             }
