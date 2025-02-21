@@ -5,42 +5,69 @@
 #include "windows.h"
 #include "math.h"
 
+HBITMAP LoadBMP(const char* name)
+{
+    return (HBITMAP)LoadImageA(NULL, name, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+}
+
 // секция данных игры
-typedef struct {
+struct racket_type {
     float x, y, width, height, speed;
     HBITMAP hBitmap;
-} racket_type;
+
+    void Load(const char* name)//TODO
+    {
+        hBitmap = LoadBMP(name);
+    }
+
+};
 
 racket_type racket;
 enum class entity { empty, enemy, lootchest, terminal };
+//TODO
+HBITMAP enemycco_bmp;
+HBITMAP lootchest_bmp;
+HBITMAP terminal_bmp;
+HBITMAP raketka_bmp;
+HBITMAP phon1_bmp;
+HBITMAP Battlephon1_bmp;
+HBITMAP Inventoryphon1_bmp;
+HBITMAP Terminalphon1_bmp;
 
-typedef struct {
+struct enemycco {
     float x, y, width, height;
     HBITMAP hBitmap;
     entity type;
-} enemycco;
+
+    void Load(const char* name)//TODO                                                                                                                         //TODO//TODO//TODO//TODO//TODO лоады как будто бы можно сократить до одного
+    {
+        hBitmap = LoadBMP(name);
+    }
+
+};
 const int enemycout = 22;
 enemycco enemy1[enemycout];
 
-typedef struct {
-    float x, y, width, height;
+struct sprite {
+    float x, y, width, height, dx,dy, rad,speed;
     HBITMAP hBitmap;
-} sprite;
+
+
+    void Load(const char* name)//TODO
+    {
+        hBitmap = LoadBMP(name);
+    }
+
+};
+
 const int splittedEnemyI = 3;
 const int splittedEnemyj = 3;
 sprite splittedEnemy[3][3];// поменять значения
 
-struct {
-    float x;
-    HBITMAP hBitmap;//хэндл к спрайту ракетки противника
-} enemy;
+sprite enemy;
+sprite ball;//TODO
 
-struct {
-    float x, y, rad, dx, dy, speed;
-    HBITMAP hBitmap;//хэндл к спрайту шарика
-} ball;
-
-struct {
+struct { //TODO
     int score, balls;//количество набранных очков и оставшихся "жизней"
     bool action = false;//состояние - ожидание (игрок должен нажать пробел) или игра
 } game;
@@ -55,14 +82,14 @@ struct {
 enum class GameMode { map, battle, loot, terminal };
 GameMode game_mode = GameMode::map;
 
-void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
+void ShowBitmap(HDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
 
-class  Mouse_ {
+class  Mouse_ { //TODO
 public:
     float x, y;
     bool L_butt, R_butt;
 
-    void  Update() {
+    void  Update() { 
         POINT p;
         GetCursorPos(&p);
         ScreenToClient(window.hWnd, &p);
@@ -75,7 +102,7 @@ public:
 
 
 };
-
+//TODO
 Mouse_ Mouse;
 int Health = 6000;
 int HealthMin = 0;
@@ -108,10 +135,10 @@ DWORD AttackcurrentTime = 0;
 
 
 
-
+//TODO кнопки расположены абсолютно хаотично, если сделать это менее вырвиглазно и более структурированно и писать игру и рефакторить станет легче, как будто бы на стадии написания для удобства можно отрисовать текст под нашими картиночками
 class button {
 public:
-    
+
     float x, y, width, height;
     HBITMAP hBitmap;//хэндл к спрайту шарика
     HBITMAP hBitmapGlow;
@@ -121,8 +148,8 @@ public:
     }
     void Load(const char* imagename, const char* imagenameglow, float x_, float y_, float w, float h) {
         x = x_; y = y_;
-        hBitmap = (HBITMAP)LoadImageA(NULL, imagename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-        hBitmapGlow = (HBITMAP)LoadImageA(NULL, imagenameglow, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+        hBitmap = LoadBMP(imagename);
+        hBitmapGlow = LoadBMP(imagenameglow);
         height = h * window.height;
         width = w * window.width;
         x = window.width / 2 - width * x;
@@ -130,7 +157,7 @@ public:
     }
     void LoadInv(const char* imagename, float x_, float y_, float w, float h) {
         x = x_; y = y_;
-        hBitmap = (HBITMAP)LoadImageA(NULL, imagename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+        hBitmap = LoadBMP(imagename);
         height = h * window.height;
         width = w * window.width;
         x = window.width / 2 - width * x;
@@ -157,7 +184,7 @@ public:
 
     bool CheckCollisionMouseHeal() {
         if (Mouse.L_butt) {
-            if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y) 
+            if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y)
             {
                 if (currentTime > healStartTime + healTime)
                 {
@@ -169,37 +196,31 @@ public:
 
                     return true;
                 }
-               
+
             }
         }
         return false;
     }
-    
 };
 
-
- 
-class Bar {
+class Bar { //TODO
 public:
-   
     float x, y, width, height, Health, Shield;
     HBITMAP hBitmapBack;
-    HBITMAP hBitmapFront;
-    
+    HBITMAP hBitmapFront; 
 
     void Load(const char* imagenameBack, const char* imagenameFront, float x_, float y_, float w, float h) {
         x = x_; y = y_;
-        hBitmapBack = (HBITMAP)LoadImageA(NULL, imagenameBack, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-        hBitmapFront = (HBITMAP)LoadImageA(NULL, imagenameFront, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+        hBitmapBack = LoadBMP(imagenameBack);
+        hBitmapFront = LoadBMP(imagenameFront);
         height = h * window.height;
         width = w * window.width;
         x = window.width / 2 - width * x;
         y = window.height / 2 + height * y;
-        
      }
 
    
-    void ShowHealth(int Health) {
+    void ShowHealth(int Health) { //TODO как будто бы можно сделать менее вырвиглазно в самой игре, да и кодяру оптимизировать
         ShowBitmap(window.context, x, y, width, height, hBitmapBack);
         ShowBitmap(window.context, x, y, Health / (float)HealthMax * width, height, hBitmapFront);
     }
@@ -215,7 +236,7 @@ public:
    
 };
 
-/*class  DW {
+/*class  DW { //TODO не лучше ли сначала сменить либу и потом уже допиливать игровую кодяру?
 public:
     float x, y, width, height, Damage, Crit_Chance, Crit_Damge;
    
@@ -228,29 +249,29 @@ public:
 */
 
 
-Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar;
+Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar; //TODO ВЫРВИГЛААААЗ
 
 button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt, Heal_butt,  Inventory_butt, BackPack__inventory_butt, Boots__inventory_butt;
 HBITMAP hBack;// хэндл для фонового изображения
 HBITMAP hBattleBack;
 HBITMAP InventoryhBack;
 HBITMAP TerminalhBack;
-
+//TODO
 
 //cекция кода
 
 
 
 
-void InitGame()
+void InitGame() //TODO
 {
     //в этой секции загружаем спрайты с помощью функций gdi
     //пути относительные - файлы должны лежать рядом с .exe 
     //результат работы LoadImageA сохраняет в хэндлах битмапов, рисование спрайтов будет произовдиться с помощью этих хэндлов
-    ball.hBitmap = (HBITMAP)LoadImageA(NULL, "shar.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    racket.hBitmap = (HBITMAP)LoadImageA(NULL, "raketka.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    ball.Load("shar.bmp");
+    racket.Load("raketka.bmp");
 
-    //DW_1    
+    //DW_1     
     PW_butt.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
     SW_butt.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
     DW_butt.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
@@ -265,11 +286,19 @@ void InitGame()
     ShieldEnemy_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.4, -42.4, .28, .01);
     HealthEnemy_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.4, -40.4, .28, .01);
 
-   
+    enemycco_bmp = LoadBMP("enemycco.bmp");
+    lootchest_bmp = LoadBMP("lootchest.bmp");
+    terminal_bmp = LoadBMP("terminal.bmp");
+    raketka_bmp = LoadBMP("raketka.bmp");
+    phon1_bmp = LoadBMP("phon1.bmp");
+    Battlephon1_bmp = LoadBMP("Battlephon1.bmp");
+    Inventoryphon1_bmp = LoadBMP("Inventoryphon1.bmp");
+    Terminalphon1_bmp = LoadBMP("Terminalphon1.bmp");
+
     srand(0);
 
 
-    int i = 0;
+    int i = 0;//TODO может тоже пересесть на свитчкейс и потом загнать в будущем это в переменку?
     float cellsize = 50;
     for (int x = 0; x < window.width / cellsize; x++) {
         for (int y = 0; y < window.height / cellsize; y++) {
@@ -289,17 +318,19 @@ void InitGame()
                 continue;
             }
             enemy1[i].type = Etype;
-            if (enemy1[i].type == entity::enemy)
+
+            
+            switch (enemy1[i].type) // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС УЛУЧШАЯ ЧИТАЕМОСЬ И УСКОРЯМ АЛГЫ //TODO
             {
-                enemy1[i].hBitmap = (HBITMAP)LoadImageA(NULL, "enemycco.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            }
-            if (enemy1[i].type == entity::lootchest)
-            {
-                enemy1[i].hBitmap = (HBITMAP)LoadImageA(NULL, "lootchest.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            }
-            if (enemy1[i].type == entity::terminal)
-            {
-                enemy1[i].hBitmap = (HBITMAP)LoadImageA(NULL, "terminal.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            case entity::enemy:
+                enemy1[i].hBitmap = enemycco_bmp;
+                break;
+            case entity::lootchest:
+                enemy1[i].hBitmap = lootchest_bmp;
+                break;
+            case entity::terminal:
+                enemy1[i].hBitmap = terminal_bmp;
+                break;
             }
 
             enemy1[i].width = cellsize;
@@ -313,19 +344,17 @@ void InitGame()
         }
     }
 
-
-    enemy.hBitmap = (HBITMAP)LoadImageA(NULL, "raketka.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    hBack = (HBITMAP)LoadImageA(NULL, "phon1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    hBattleBack = (HBITMAP)LoadImageA(NULL, "Battlephon1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    InventoryhBack = (HBITMAP)LoadImageA(NULL, "Inventoryphon1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    TerminalhBack = (HBITMAP)LoadImageA(NULL, "Terminalphon1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-
+    enemy.Load("raketka.bmp");
+    hBack = LoadBMP("phon1.bmp");
+    hBattleBack = LoadBMP("Battlephon1.bmp");
+    InventoryhBack = LoadBMP("Inventoryphon1.bmp");
+    TerminalhBack = LoadBMP("Terminalphon1.bmp");
 
     racket.width = 50;
     racket.height = 50;
     racket.speed = 17;//скорость перемещения ракетки
     racket.x = window.width / 2.;//ракетка посередине окна
-    racket.y = window.height - racket.height;//чуть выше низа экрана - на высоту ракетки
+    racket.y = window.height - racket.height;//чуть выше низа экрана - на высоту ракетки       //TODO//TODO//TODO структуры из пингпонга, нахрен от сюда или переделать
 
     enemy.x = racket.x;//х координату оппонета ставим в ту же точку что и игрока
 
@@ -346,7 +375,7 @@ void ProcessSound(const char* name)//проигрывание аудиофайла в формате .wav, фай
     PlaySound(TEXT(name), NULL, SND_FILENAME | SND_ASYNC);//переменная name содежрит имя файла. флаг ASYNC позволяет проигрывать звук паралельно с исполнением программы
 }
 
-void ShowScore()
+void ShowScore() //TODO
 {
     return;
     //поиграем шрифтами и цветами
@@ -365,7 +394,7 @@ void ShowScore()
     TextOutA(window.context, 200, 100, (LPCSTR)txt, strlen(txt));
 }
 
-void ProcessInput()
+void ProcessInput() //TODO
 {
     if (GetAsyncKeyState(VK_LEFT)) racket.x -= racket.speed;
     if (GetAsyncKeyState(VK_RIGHT)) racket.x += racket.speed;
@@ -379,13 +408,13 @@ void ProcessInput()
     }
 }
 
-void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha)
+void ShowBitmap(HDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) //TODO
 {
     HBITMAP hbm, hOldbm;
     HDC hMemDC;
     BITMAP bm;
 
-    hMemDC = CreateCompatibleDC(hDC); // Создаем контекст памяти, совместимый с контекстом отображения
+    hMemDC = CreateCompatibleDC(window.context); // Создаем контекст памяти, совместимый с контекстом отображения
     hOldbm = (HBITMAP)SelectObject(hMemDC, hBitmapBall);// Выбираем изображение bitmap в контекст памяти
 
     if (hOldbm) // Если не было ошибок, продолжаем работу
@@ -398,7 +427,7 @@ void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool
         }
         else
         {
-            StretchBlt(hDC, x, y, x1, y1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY); // Рисуем изображение bitmap
+            StretchBlt(window.context, x, y, x1, y1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY); // Рисуем изображение bitmap
         }
 
         SelectObject(hMemDC, hOldbm);// Восстанавливаем контекст памяти
@@ -449,7 +478,7 @@ void ShowBattle() {
 
  }
 
-void ShowRacketAndBall()
+void ShowRacketAndBall() //TODO
 {
     ShowBitmap(window.context, 0, 0, window.width, window.height, hBack);//задний фон
 
@@ -464,7 +493,7 @@ void ShowRacketAndBall()
     ShowBitmap(window.context, Mouse.x, Mouse.y, ball.rad, ball.rad, ball.hBitmap);
 }
 
-void LimitRacket()
+void LimitRacket() //TODO
 {
     racket.x = max(racket.x, racket.width / 2.);//если коодината левого угла ракетки меньше нуля, присвоим ей ноль
     racket.x = min(racket.x, window.width - racket.width / 2.);//аналогично для правого угла
@@ -473,7 +502,7 @@ void LimitRacket()
 }
 
 
-void CheckWalls()
+void CheckWalls() //TODO
 {
     if (ball.x < ball.rad || ball.x > window.width - ball.rad)
     {
@@ -482,7 +511,7 @@ void CheckWalls()
     }
 }
 
-void CheckRoof()
+void CheckRoof() //TODO
 {
     if (ball.y < ball.rad + racket.height)
     {
@@ -491,9 +520,9 @@ void CheckRoof()
     }
 }
 
-bool tail = false;
+bool tail = false; //TODO
 
-bool CheckCollision(racket_type r, enemycco e)
+bool CheckCollision(racket_type r, enemycco e) //TODO
 {
     auto dx = r.x - e.x;
     auto dy = r.y - e.y;
@@ -506,7 +535,7 @@ bool CheckCollision(racket_type r, enemycco e)
     return false;
 }
 
-bool CheckCollisionMouse(enemycco e)
+bool CheckCollisionMouse(enemycco e) //TODO
 {
     auto dx = Mouse.x - e.x;
     auto dy = Mouse.y - e.y;
@@ -521,23 +550,25 @@ bool CheckCollisionMouse(enemycco e)
 
 
 
-void ProcessRoom()
+void ProcessRoom() //TODO
 {
     //обрабатываем стены, потолок и пол. принцип - угол падения равен углу отражения, а значит, для отскока мы можем просто инвертировать часть вектора движения шарика
     CheckWalls();
     CheckRoof();
 
-    for (int i = 0; i < enemycout; i++) {
-        if (CheckCollision(racket, enemy1[i]) == true) {
-            if (enemy1[i].type == entity::lootchest) {
-                game_mode = GameMode::loot;
-            }
-            if (enemy1[i].type == entity::enemy) {
-                game_mode = GameMode::battle;
-            }
-
-            if (enemy1[i].type == entity::terminal) {
-                game_mode = GameMode::terminal;
+    for (int i = 0; i < enemycout; i++) {  // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС
+        if (CheckCollision(racket, enemy1[i]) == true) 
+        {
+            switch (enemy1[i].type) {
+                case entity::lootchest:
+                    game_mode = GameMode::loot;
+                     break;
+                case entity::enemy:
+                    game_mode = GameMode::battle;
+                        break;
+                case entity::terminal:
+                    game_mode = GameMode::terminal;
+                        break;
             }
         }
     }
@@ -560,8 +591,8 @@ void InitWindow()
     GetClientRect(window.hWnd, &r);
 
 }
-double random = 1;
-void BattleGame() {
+double random = 1; 
+void BattleGame() {//TODO ??????
 
     ShowBattle();//рисуем фон 
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
@@ -630,7 +661,7 @@ void BattleGame() {
                 AttackStartTime = currentTime;
             }
         }
-        if (Heal_butt.CheckCollisionMouseHeal()) {
+        if (Heal_butt.CheckCollisionMouseHeal()) { //TO DOO/QUESTION?
            
         }
         if (Inventory_butt.CheckCollisionMouse()) {
@@ -642,12 +673,12 @@ void BattleGame() {
         }
 
     }
-    ProcessInput();//опрос клавиатуры
-    LimitRacket();
+    ProcessInput();//опрос клавиатуры //TODO если я не совсем заплыл, то он делается в кодяре дважды
+    LimitRacket();//TODO
 
 }
 
-void TerminalGame() {
+void TerminalGame() { //TODO
     ShowTerminal();
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);
     Sleep(20);
@@ -670,7 +701,7 @@ void LootGame() {
         if (Exit_butt.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
-    }
+    }//TODO
 }
 
 
@@ -678,27 +709,28 @@ void MapGame() {
     ShowRacketAndBall();//рисуем фон, ракетку и шарик
     ShowScore();
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
-    Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду)
+    Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду) 
     for (int i = 0; i < enemycout; i++) {
         if (Mouse.L_butt) {
             if (CheckCollisionMouse(enemy1[i]))
             {
-                if (enemy1[i].type == entity::lootchest) {
-                    game_mode = GameMode::loot;
-                }
-                if (enemy1[i].type == entity::enemy) {
-                    game_mode = GameMode::battle;
-                }
-
-                if (enemy1[i].type == entity::terminal) {
-                    game_mode = GameMode::terminal;
+                switch (enemy1[i].type) {
+                    case entity::lootchest:
+                        game_mode = GameMode::loot;
+                        break;
+                    case entity::enemy:
+                        game_mode = GameMode::battle;
+                        break;
+                    case entity::terminal:
+                        game_mode = GameMode::terminal;
+                        break;
                 }
             }
         }
-    }
-    ProcessInput();//опрос клавиатуры
-    LimitRacket();//проверяем, чтобы ракетка не убежала за экран
-    // ProcessBall();//перемещаем шарик
+    } //TODO
+    ProcessInput();//опрос клавиатуры//TODO
+    LimitRacket();//проверяем, чтобы ракетка не убежала за экран//TODO
+    // ProcessBall();//перемещаем шарик //TODO
     ProcessRoom();//обрабатываем отскоки от стен и каретки, попадание шарика в картетку
 }
 
@@ -728,3 +760,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
 }
+// Нужно максимально сократить повторы, загнать вызовы функций в переменные и вызывать их локально из переменных, а не создавать по новой, со switch'ами сделать то же самое, за счет чего увеличиваем общую читаемость и оптимизируем код
+// Максимально рефакторим, ПОСЛЕ оптимизируем. Все API'шные штуки выносим в отдельный слой и в дальнейшем вызываем функциями, а функции выносим в переменные и вызываем переменными.(например опрос мышки, опрос клавиатуры).
+//Когда в игре наносится урон игра крашится,выявить закономерность и поправить, когда кликаем на chest'ы игра крашится, когда кликаем на terminal'ы? тоже крашится.
+// Прежде чем пересадимся на новую либу, чистим код от лишних сущностей, переписываем всё всё всё под нашу игру, что бы не было переменных из пинг-понга/арканоида. Не забываем что кодяра у нас в X86 разрядности, хотя я бы перевел на X64, нахрен 32-х битку)))).
+//TODO - везде писал так, ктрл+ф и радуемся жизни
