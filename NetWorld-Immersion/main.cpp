@@ -10,6 +10,12 @@ HBITMAP LoadBMP(const char* name)
     return (HBITMAP)LoadImageA(NULL, name, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 }
 
+int clamp(int x, int minX, int maxX)
+{
+    return max(min(maxX, x), minX);
+}
+
+
 // секци€ данных игры
 struct racket_type {
     float x, y, width, height, speed;
@@ -25,6 +31,15 @@ struct racket_type {
 racket_type racket;
 enum class entity { empty, enemy, lootchest, terminal };
 //TODO
+
+int random = 1;
+
+
+DWORD healStartTime = 0;
+DWORD healTime = 2000;
+DWORD currentTime = 0;
+
+
 HBITMAP enemycco_bmp;
 HBITMAP lootchest_bmp;
 HBITMAP terminal_bmp;
@@ -49,7 +64,7 @@ const int enemycout = 22;
 enemycco enemy1[enemycout];
 
 struct sprite {
-    float x, y, width, height, dx,dy, rad,speed;
+    float x, y, width, height;
     HBITMAP hBitmap;
 
 
@@ -82,7 +97,7 @@ struct {
 enum class GameMode { map, battle, loot, terminal };
 GameMode game_mode = GameMode::map;
 
-void ShowBitmap(HDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
+void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
 
 class  Mouse_ { //TODO
 public:
@@ -104,29 +119,65 @@ public:
 };
 //TODO
 Mouse_ Mouse;
-int Health = 6000;
-int HealthMin = 0;
-int HealthMax = 50000;
-int Shield = 6000;
-int ShieldMin = 0;
-int ShieldMax = 50000;
-int Shield_bonus = 2; // rework shield_bonus system
 
-int HealthEnemy = 40000;
-int HealthEnemyMin = 0;
-int HealthEnemyMax = 50000;
-int ShieldEnemy = 40000;
-int ShieldEnemyMin = 0;
-int ShieldEnemyMax = 50000;
-int ShieldEnemy_bonus = 20; // rework shield_bonus system
+struct player_ {
+    int Health = 46000;
+    int HealthMin = 0;
+    int HealthMax = 50000;
+    int Shield = 46000;
+    int ShieldMin = 0;
+    int ShieldMax = 50000;
+    int Shield_bonus = 2; // rework shield_bonus system
 
-int clamp(int x, int minX, int maxX)
-{
-    return max(min(maxX, x), minX);
-}
-DWORD healStartTime = 0;
-DWORD healTime = 2000;
-DWORD currentTime = 0;
+    void adjustHealth(int v) {
+        srand(random);
+        random = rand() % v;
+        Health = Health - random;
+        Health = clamp(Health, HealthMin, HealthMax);
+    }
+    void adjustShield(int s) {
+        srand(random);
+        random = (rand() % s) * 2;
+        Shield = Shield - random;
+        Shield = clamp(Shield, ShieldMin, ShieldMax);
+    }
+    void adjustHeal() {
+        Health += 1500;
+        Health = clamp(Health, HealthMin, HealthMax);
+        Shield = (Shield + 1500) * Shield_bonus;
+        Shield = clamp(Shield, ShieldMin, ShieldMax);
+        healStartTime = currentTime;
+    }
+
+};
+
+player_ player;
+
+struct Enemy_ {
+    int HealthEnemy = 40000;
+    int HealthEnemyMin = 0;
+    int HealthEnemyMax = 50000;
+    int ShieldEnemy = 40000;
+    int ShieldEnemyMin = 0;
+    int ShieldEnemyMax = 50000;
+    int ShieldEnemy_bonus = 20; // rework shield_bonus system
+
+    void adjustHealth(int v) {
+        srand(random);
+        int random = rand() % v;
+        HealthEnemy = HealthEnemy - random;
+        HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
+    }
+    void adjustShield(int s) {
+        srand(random);
+        int random = (rand() % s) * 2;
+        ShieldEnemy = ShieldEnemy - random;
+        ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
+    }
+   
+};
+
+Enemy_ Enemy;
 
 
 DWORD AttackStartTime = 0;
@@ -173,12 +224,12 @@ public:
             offset = 0;
         }
 
-        ShowBitmap(window.context, x, y + offset, width, height, pw_collision ? hBitmapGlow : hBitmap);
+        ShowBitmap(x, y + offset, width, height, pw_collision ? hBitmapGlow : hBitmap);
         return pw_collision;
     }
     bool ShowInv() {
         bool pw_collision = CheckCollisionMouse();
-        ShowBitmap(window.context, x, y, width, height, hBitmap);
+        ShowBitmap(x, y, width, height, hBitmap);
         return pw_collision;
     }
 
@@ -186,14 +237,9 @@ public:
         if (Mouse.L_butt) {
             if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y)
             {
-                if (currentTime > healStartTime + healTime)
+                if (currentTime > healStartTime + healTime) //todo
                 {
-                    Health = Health + 1500;
-                    Health = clamp(Health, HealthMin, HealthMax);
-                    Shield = (Shield + 1500) * Shield_bonus;
-                    Shield = clamp(Shield, ShieldMin, ShieldMax);
-                    healStartTime = currentTime;
-
+                    player.adjustHeal();
                     return true;
                 }
 
@@ -221,12 +267,12 @@ public:
 
    
     void ShowHealth(int Health) { //TODO как будто бы можно сделать менее вырвиглазно в самой игре, да и код€ру оптимизировать
-        ShowBitmap(window.context, x, y, width, height, hBitmapBack);
-        ShowBitmap(window.context, x, y, Health / (float)HealthMax * width, height, hBitmapFront);
+        ShowBitmap(x, y, width, height, hBitmapBack);
+        ShowBitmap(x, y, Health / (float)player.HealthMax * width, height, hBitmapFront);
     }
     void ShowShield(int Shield) {
-        ShowBitmap(window.context, x, y, width, height, hBitmapBack);
-        ShowBitmap(window.context, x, y, Shield / (float)ShieldMax * width, height, hBitmapFront);
+        ShowBitmap(x, y, width, height, hBitmapBack);
+        ShowBitmap(x, y, Shield / (float)player.ShieldMax * width, height, hBitmapFront);
     }
     bool CheckCollisionMouse()
     {
@@ -236,32 +282,14 @@ public:
    
 };
 
-/*class  DW { //TODO не лучше ли сначала сменить либу и потом уже допиливать игровую код€ру?
-public:
-    float x, y, width, height, Damage, Crit_Chance, Crit_Damge;
-   
-    void  Nay() {
-       
-    }
-
-
-};
-*/
-
 
 Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar; //TODO ¬џ–¬»√Ћјјјј«
 
-button PW_butt, SW_butt, DW_butt, Enemy_butt, Exit_butt, Heal_butt,  Inventory_butt, BackPack__inventory_butt, Boots__inventory_butt;
+button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt,  Inventory_butt, Boots__inventory_butt;
 HBITMAP hBack;// хэндл дл€ фонового изображени€
 HBITMAP hBattleBack;
 HBITMAP InventoryhBack;
 HBITMAP TerminalhBack;
-//TODO
-
-//cекци€ кода
-
-
-
 
 void InitGame() //TODO
 {
@@ -272,11 +300,11 @@ void InitGame() //TODO
     racket.Load("raketka.bmp");
 
     //DW_1     
-    PW_butt.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
-    SW_butt.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
-    DW_butt.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
-    Enemy_butt.Load("Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .25, .60 );
-    Exit_butt.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
+    PrimWeapon.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
+    SpecWeapon.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
+    DestructiveWeapon.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
+    EnemyB.Load("Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .25, .60 );
+    Exit.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
     Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
     Inventory_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", 3.65, 5.12, .07, .07);
     Boots__inventory_butt.LoadInv("Boots__inventory_butt.bmp", 0.5, 3., .4, .07);
@@ -358,13 +386,6 @@ void InitGame() //TODO
 
     enemy.x = racket.x;//х координату оппонета ставим в ту же точку что и игрока
 
-    ball.dy = (rand() % 65 + 35) / 100.;//формируем вектор полета шарика
-    ball.dx = -(1 - ball.dy);//формируем вектор полета шарика
-    ball.speed = 30;
-    ball.rad = 40;
-    ball.x = racket.x;//x координата шарика - на середие ракетки
-    ball.y = racket.y - ball.rad;//шарик лежит сверху ракетки
-
     game.score = 0;
     game.balls = 9;
 
@@ -408,7 +429,7 @@ void ProcessInput() //TODO
     }
 }
 
-void ShowBitmap(HDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) //TODO
+void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) //TODO
 {
     HBITMAP hbm, hOldbm;
     HDC hMemDC;
@@ -440,87 +461,57 @@ void ShowBitmap(HDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alp
 
 
 void ShowInventory() {
-    ShowBitmap(window.context, 0, 0, window.width / 2., window.height / 2., InventoryhBack);//задний фон
+    ShowBitmap(0, 0, window.width / 2., window.height / 2., InventoryhBack);//задний фон
     bool BootsInventory = Boots__inventory_butt.ShowInv();
 }
 
 void ShowLoot() {
-    ShowBitmap(window.context, 0, 0, window.width, window.height, InventoryhBack);//задний фон
-    bool exit = Exit_butt.Show();
+    ShowBitmap( 0, 0, window.width, window.height, InventoryhBack);//задний фон
+    bool exit = Exit.Show();
     bool BootsInventory = Boots__inventory_butt.Show();
-    ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
+    ShowBitmap(racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
 }
 
 void ShowTerminal() {
-    ShowBitmap(window.context, 0, 0, window.width, window.height, TerminalhBack);//задний фон
-    bool exit = Exit_butt.Show();
-    ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
+    ShowBitmap(0, 0, window.width, window.height, TerminalhBack);//задний фон
+    bool exit = Exit.Show();
+    ShowBitmap(racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
 }
 
 
 void ShowBattle() {
   
-    ShowBitmap(window.context, 0, 0, window.width, window.height, hBattleBack);//задний фон
+    ShowBitmap(0, 0, window.width, window.height, hBattleBack);//задний фон
 
-    bool pw = PW_butt.Show();
-    bool sw = SW_butt.Show();
-    bool dw = DW_butt.Show();
-    bool exit = Exit_butt.Show();
-    bool enemy = Enemy_butt.Show();
+    bool pw = PrimWeapon.Show();
+    bool sw = SpecWeapon.Show();
+    bool dw = DestructiveWeapon.Show();
+    bool exit = Exit.Show();
+    bool enemy = EnemyB.Show();
     bool HealButt = Heal_butt.Show();
     bool InventoryButt = Inventory_butt.Show();
 
-    Health_bar.ShowHealth(Health);
-    Shield_bar.ShowShield(Shield);
-    ShieldEnemy_bar.ShowShield(ShieldEnemy);
-    HealthEnemy_bar.ShowHealth(HealthEnemy);
+    Health_bar.ShowHealth(player.Health);
+    Shield_bar.ShowShield(player.Shield);
+    ShieldEnemy_bar.ShowShield(Enemy.ShieldEnemy);
+    HealthEnemy_bar.ShowHealth(Enemy.HealthEnemy);
 
 
  }
 
 void ShowRacketAndBall() //TODO
 {
-    ShowBitmap(window.context, 0, 0, window.width, window.height, hBack);//задний фон
+    ShowBitmap(0, 0, window.width, window.height, hBack);//задний фон
 
-    ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);// ракетка игрока
+    ShowBitmap(racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);// ракетка игрока
+    
     for (int i = 0; i < enemycout; i++) {
-        ShowBitmap(window.context, enemy1[i].x - enemy1[i].width / 2., enemy1[i].y, enemy1[i].width, enemy1[i].height, enemy1[i].hBitmap);
+        ShowBitmap(enemy1[i].x - enemy1[i].width / 2., enemy1[i].y, enemy1[i].width, enemy1[i].height, enemy1[i].hBitmap);
     }
-    if (ball.dy < 0 && (enemy.x - racket.width / 4 > ball.x || ball.x > enemy.x + racket.width / 4))
-    {
-        enemy.x = ball.x * .1 + enemy.x * .9;
-    }
-    ShowBitmap(window.context, Mouse.x, Mouse.y, ball.rad, ball.rad, ball.hBitmap);
+    
+    ShowBitmap(Mouse.x, Mouse.y, ball.width, ball.height, ball.hBitmap);
 }
 
-void LimitRacket() //TODO
-{
-    racket.x = max(racket.x, racket.width / 2.);//если коодината левого угла ракетки меньше нул€, присвоим ей ноль
-    racket.x = min(racket.x, window.width - racket.width / 2.);//аналогично дл€ правого угла
-    racket.y = max(racket.y, 0.);
-    racket.y = min(racket.y, window.height - racket.height);
-}
-
-
-void CheckWalls() //TODO
-{
-    if (ball.x < ball.rad || ball.x > window.width - ball.rad)
-    {
-        ball.dx *= -1;
-        ProcessSound("knopka-voda-vyisokii-rezkii.wav");
-    }
-}
-
-void CheckRoof() //TODO
-{
-    if (ball.y < ball.rad + racket.height)
-    {
-        ball.dy *= -1;
-        ProcessSound("knopka-voda-vyisokii-rezkii.wav");
-    }
-}
-
-bool tail = false; //TODO
 
 bool CheckCollision(racket_type r, enemycco e) //TODO
 {
@@ -552,10 +543,6 @@ bool CheckCollisionMouse(enemycco e) //TODO
 
 void ProcessRoom() //TODO
 {
-    //обрабатываем стены, потолок и пол. принцип - угол падени€ равен углу отражени€, а значит, дл€ отскока мы можем просто инвертировать часть вектора движени€ шарика
-    CheckWalls();
-    CheckRoof();
-
     for (int i = 0; i < enemycout; i++) {  // — »‘ќ¬ ѕ≈–≈’ќƒ»ћ Ќј —¬»“„ ≈…—
         if (CheckCollision(racket, enemy1[i]) == true) 
         {
@@ -591,7 +578,7 @@ void InitWindow()
     GetClientRect(window.hWnd, &r);
 
 }
-double random = 1; 
+
 void BattleGame() {//TODO ??????
 
     ShowBattle();//рисуем фон 
@@ -599,65 +586,32 @@ void BattleGame() {//TODO ??????
     Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
     if (Mouse.L_butt)
     {
-        if (PW_butt.CheckCollisionMouse()) {
+        if (PrimWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
-                //game_mode = GameMode::map;
-                srand(random);
-                random = rand() % 500;
-                Health = Health - random;
-                Health = clamp(Health, HealthMin, HealthMax);
-                random = (rand() % 600) * 2;
-                Shield = Shield - random;
-                Shield = clamp(Shield, ShieldMin, ShieldMax);
-
-                random = (rand() % 4000) * 2;
-                HealthEnemy = HealthEnemy - random;
-                HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
-                random = (rand() % 6000) * 2;
-                ShieldEnemy = ShieldEnemy - random;
-                ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
+             
+                player.adjustHealth(4000);
+                player.adjustShield(6500);
+                Enemy.adjustHealth(5000);
+                Enemy.adjustShield(6500);
                 AttackStartTime = currentTime;
             }                       
         }
-        if (SW_butt.CheckCollisionMouse()) {
+        if (SpecWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
-                //game_mode = GameMode::map;
-                srand(random);
-                random = rand() % 700;
-                Health = Health - random;
-                Health = clamp(Health, HealthMin, HealthMax);
-                random = (rand() % 1500) * 2;
-                Shield = Shield - random;
-                Shield = clamp(Shield, ShieldMin, ShieldMax);
-
-                random = (rand() % 8000) * 2;
-                HealthEnemy = HealthEnemy - random;
-                HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
-                random = (rand() % 12000) * 2;
-                ShieldEnemy = ShieldEnemy - random;
-                ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
+                player.adjustHealth(7500);
+                player.adjustShield(9000);
+                Enemy.adjustHealth(8000);
+                Enemy.adjustShield(12000);
                 AttackStartTime = currentTime;
             }
         }
 
-        if (DW_butt.CheckCollisionMouse()) {
+        if (DestructiveWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime)  {
-                //game_mode = GameMode::map;
-                srand(random);
-                random = rand() % 1500;
-                Health = Health - random;
-                Health = clamp(Health, HealthMin, HealthMax);
-                random = (rand() % 3000) * 2;
-                Shield = Shield - random;
-                Shield = clamp(Shield, ShieldMin, ShieldMax);
-
-                random = (rand() % 20000) * 2;
-                HealthEnemy = HealthEnemy - random;
-                HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
-                random = (rand() % 10000) * 2;
-                ShieldEnemy = ShieldEnemy - random;
-                ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
-
+                player.adjustHealth(10000);
+                player.adjustShield(15000);
+                Enemy.adjustHealth(17000);
+                Enemy.adjustShield(23000);
                 AttackStartTime = currentTime;
             }
         }
@@ -668,14 +622,12 @@ void BattleGame() {//TODO ??????
             ShowInventory();
         }
 
-        if (Exit_butt.CheckCollisionMouse()) {
+        if (Exit.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
 
     }
     ProcessInput();//опрос клавиатуры //TODO если € не совсем заплыл, то он делаетс€ в код€ре дважды
-    LimitRacket();//TODO
-
 }
 
 void TerminalGame() { //TODO
@@ -684,7 +636,7 @@ void TerminalGame() { //TODO
     Sleep(20);
     ProcessInput();
     if (Mouse.L_butt) {
-        if (Exit_butt.CheckCollisionMouse()) {
+        if (Exit.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
     }
@@ -693,12 +645,12 @@ void TerminalGame() { //TODO
 void LootGame() {
     ShowLoot();
     
-    ShowBitmap(window.context, racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
+    ShowBitmap(racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
     ProcessInput();//опрос клавиатуры
     if (Mouse.L_butt) {
-        if (Exit_butt.CheckCollisionMouse()) {
+        if (Exit.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
     }//TODO
@@ -729,8 +681,6 @@ void MapGame() {
         }
     } //TODO
     ProcessInput();//опрос клавиатуры//TODO
-    LimitRacket();//провер€ем, чтобы ракетка не убежала за экран//TODO
-    // ProcessBall();//перемещаем шарик //TODO
     ProcessRoom();//обрабатываем отскоки от стен и каретки, попадание шарика в картетку
 }
 
