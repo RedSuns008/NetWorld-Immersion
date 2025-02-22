@@ -63,25 +63,6 @@ struct enemycco {
 const int enemycout = 22;
 enemycco enemy1[enemycout];
 
-struct sprite {
-    float x, y, width, height;
-    HBITMAP hBitmap;
-
-
-    void Load(const char* name)//TODO
-    {
-        hBitmap = LoadBMP(name);
-    }
-
-};
-
-const int splittedEnemyI = 3;
-const int splittedEnemyj = 3;
-sprite splittedEnemy[3][3];// поменять значения
-
-sprite enemy;
-sprite ball;//TODO
-
 struct { //TODO
     int score, balls;//количество набранных очков и оставшихся "жизней"
     bool action = false;//состояние - ожидание (игрок должен нажать пробел) или игра
@@ -296,7 +277,6 @@ void InitGame() //TODO
     //в этой секции загружаем спрайты с помощью функций gdi
     //пути относительные - файлы должны лежать рядом с .exe 
     //результат работы LoadImageA сохраняет в хэндлах битмапов, рисование спрайтов будет произовдиться с помощью этих хэндлов
-    ball.Load("shar.bmp");
     racket.Load("raketka.bmp");
 
     //DW_1     
@@ -372,7 +352,6 @@ void InitGame() //TODO
         }
     }
 
-    enemy.Load("raketka.bmp");
     hBack = LoadBMP("phon1.bmp");
     hBattleBack = LoadBMP("Battlephon1.bmp");
     InventoryhBack = LoadBMP("Inventoryphon1.bmp");
@@ -383,8 +362,6 @@ void InitGame() //TODO
     racket.speed = 17;//скорость перемещения ракетки
     racket.x = window.width / 2.;//ракетка посередине окна
     racket.y = window.height - racket.height;//чуть выше низа экрана - на высоту ракетки       //TODO//TODO//TODO структуры из пингпонга, нахрен от сюда или переделать
-
-    enemy.x = racket.x;//х координату оппонета ставим в ту же точку что и игрока
 
     game.score = 0;
     game.balls = 9;
@@ -509,7 +486,7 @@ void ShowRacketAndBall() //TODO
         ShowBitmap(enemy1[i].x - enemy1[i].width / 2., enemy1[i].y, enemy1[i].width, enemy1[i].height, enemy1[i].hBitmap);
     }
     
-    ShowBitmap(Mouse.x, Mouse.y, ball.width, ball.height, ball.hBitmap);
+    ShowBitmap(Mouse.x, Mouse.y, 1,1, raketka_bmp);
 }
 
 
@@ -705,8 +682,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         case GameMode::loot: LootGame(); break;
         case GameMode::terminal: TerminalGame(); break;
         }
-
-
     }
 
 }
