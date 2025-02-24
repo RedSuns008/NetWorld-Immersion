@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Debug\Battlephon1.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\dw_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\dw_butt_glow.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Enemy_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\enemycco.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\exit_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Heal_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Health_bar_back.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Health_bar_front.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Lootphon1.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\lootchest.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\phon1.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\pw_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\pw_butt_glow.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\shar.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\sw_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\sw_butt_glow.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Shield_bar_back.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Shield_bar_front.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\terminal.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\BackPack__inventory_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Boots__inventory_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\Boots__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\dw__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\FastSlot1_inventory_butt.bmp">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\FastSlot1_inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\helmet__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\LowerArmor__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\pw__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\sw__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+    <Image Include="..\Debug\UpperArmor__inventory_butt.png">
+      <Filter>Res</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Res">
+      <UniqueIdentifier>{0aedb256-39ac-407e-97bd-82fe32ed7e08}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
