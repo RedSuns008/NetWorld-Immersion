@@ -18,7 +18,6 @@ DWORD healStartTime = 0;
 DWORD healTime = 2000;
 DWORD currentTime = 0;
 
-
 HBITMAP enemycco_bmp;
 HBITMAP lootchest_bmp;
 HBITMAP terminal_bmp;
@@ -39,8 +38,8 @@ struct Enemycco {
     }
 
 };
-const int enemycout = 22;
-Enemycco enemy1[enemycout];
+const int enemycount = 22;
+Enemycco enemy1[enemycount];
 
 struct { //TODO
     int score, balls;//количество набранных очков и оставшихся "жизней"
@@ -270,7 +269,7 @@ void InitGame() //TODO
     Shield_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.45, 31.7, .28, .01);
     ShieldEnemy_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.4, -42.4, .28, .01);
     HealthEnemy_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.4, -40.4, .28, .01);
-
+    
     enemycco_bmp = LoadBMP("enemycco.bmp");
     lootchest_bmp = LoadBMP("lootchest.bmp");
     terminal_bmp = LoadBMP("terminal.bmp");
@@ -279,32 +278,26 @@ void InitGame() //TODO
     Battlephon1_bmp = LoadBMP("Battlephon1.bmp");
     Inventoryphon1_bmp = LoadBMP("Inventoryphon1.bmp");
     Terminalphon1_bmp = LoadBMP("Terminalphon1.bmp");
-
     srand(0);
-
 
     int i = 0;//TODO может тоже пересесть на свитчкейс и потом загнать в будущем это в переменку?
     float cellsize = 50;
     for (int x = 0; x < window.width / cellsize; x++) {
         for (int y = 0; y < window.height / cellsize; y++) {
-            if (i >= enemycout) {
-                continue;
+            if (i >= enemycount) {
+                break;
             }
-            Entity Etype;
-            auto rnd = (rand() % 100);
-            if (rnd < 97) {
-                Etype = Entity::empty;
-            }
-            else {
-                rnd = 100 - rnd;
-                Etype = (Entity)rnd;
-            }
-            if (Etype == Entity::empty) {
-                continue;
-            }
-            enemy1[i].type = Etype;
 
-            
+            auto rnd = (rand() % 100);
+            if (rnd < 97)
+            {
+                continue;
+            }
+            else
+            {
+                enemy1[i].type = (Entity)(100-rnd);
+            }
+
             switch (enemy1[i].type) // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС УЛУЧШАЯ ЧИТАЕМОСЬ И УСКОРЯМ АЛГЫ //TODO
             {
             case Entity::enemy:
@@ -320,12 +313,9 @@ void InitGame() //TODO
 
             enemy1[i].width = cellsize;
             enemy1[i].height = cellsize;
-            float screen_X = enemy1[i].width * x;
-            float screen_Y = enemy1[i].height * y;
-            enemy1[i].x = screen_X;
-            enemy1[i].y = screen_Y;
+            enemy1[i].x = enemy1[i].width * x;
+            enemy1[i].y = enemy1[i].height * y;
             i++;
-
         }
     }
 
@@ -444,7 +434,7 @@ void ShowMapGame() //TODO
 {
     ShowBitmap(0, 0, window.width, window.height, hBack);//задний фон
 
-    for (int i = 0; i < enemycout; i++) {
+    for (int i = 0; i < enemycount; i++) {
         ShowBitmap(enemy1[i].x - enemy1[i].width / 2., enemy1[i].y, enemy1[i].width, enemy1[i].height, enemy1[i].hBitmap);
     }
     
@@ -468,7 +458,7 @@ bool CheckCollisionMouse(Enemycco e) //TODO
 
 void ProcessRoom() //TODO
 {
-    for (int i = 0; i < enemycout; i++) {  // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС
+    for (int i = 0; i < enemycount; i++) {  // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС
         if (mouse.L_butt) {
             if (CheckCollisionMouse(enemy1[i]) == true)
             {
@@ -588,7 +578,7 @@ void MapGame() {
     ShowScore();
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду) 
-    for (int i = 0; i < enemycout; i++) {
+    for (int i = 0; i < enemycount; i++) {
         if (mouse.L_butt) {
             if (CheckCollisionMouse(enemy1[i]))
             {
@@ -610,12 +600,12 @@ void MapGame() {
     ProcessRoom();//обрабатываем отскоки от стен и каретки, попадание шарика в картетку
 }
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+int APIENTRY wWinMain(
+    _In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPWSTR    lpCmdLine,
     _In_ int       nCmdShow)
 {
-
     InitWindow();//здесь инициализируем все что нужно для рисования в окне
     InitGame();//здесь инициализируем переменные игры
 
