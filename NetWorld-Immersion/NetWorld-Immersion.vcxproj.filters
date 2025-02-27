@@ -103,4 +103,7 @@
       <UniqueIdentifier>{0aedb256-39ac-407e-97bd-82fe32ed7e08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="WinApiUtils.h" />
+  </ItemGroup>
 </Project>

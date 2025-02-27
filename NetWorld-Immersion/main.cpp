@@ -4,36 +4,15 @@
 
 #include "windows.h"
 #include "math.h"
-
-HBITMAP LoadBMP(const char* name)
-{
-    return (HBITMAP)LoadImageA(NULL, name, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-}
+#include "WinApiUtils.h"
 
 int clamp(int x, int minX, int maxX)
 {
     return max(min(maxX, x), minX);
 }
 
-
-// секция данных игры
-struct RacketType {
-    float x, y, width, height, speed;
-    HBITMAP hBitmap;
-
-    void Load(const char* name)//TODO
-    {
-        hBitmap = LoadBMP(name);
-    }
-
-};
-
-RacketType racket;
 enum class Entity { empty, enemy, lootchest, terminal };
-//TODO
-
 int random = 1;
-
 
 DWORD healStartTime = 0;
 DWORD healTime = 2000;
@@ -54,7 +33,7 @@ struct Enemycco {
     HBITMAP hBitmap;
     Entity type;
 
-    void Load(const char* name)//TODO                                                                                                                         //TODO//TODO//TODO//TODO//TODO лоады как будто бы можно сократить до одного
+    void Load(const char* name)//TODO лоады как будто бы можно сократить до одного
     {
         hBitmap = LoadBMP(name);
     }
@@ -277,9 +256,7 @@ void InitGame() //TODO
     //в этой секции загружаем спрайты с помощью функций gdi
     //пути относительные - файлы должны лежать рядом с .exe 
     //результат работы LoadImageA сохраняет в хэндлах битмапов, рисование спрайтов будет произовдиться с помощью этих хэндлов
-    racket.Load("raketka.bmp");
-
-    //DW_1     
+    
     PrimWeapon.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
     SpecWeapon.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
     DestructiveWeapon.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
@@ -357,12 +334,6 @@ void InitGame() //TODO
     InventoryhBack = LoadBMP("Inventoryphon1.bmp");
     TerminalhBack = LoadBMP("Terminalphon1.bmp");
 
-    racket.width = 50;
-    racket.height = 50;
-    racket.speed = 17;//скорость перемещения ракетки
-    racket.x = window.width / 2.;//ракетка посередине окна
-    racket.y = window.height - racket.height;//чуть выше низа экрана - на высоту ракетки       //TODO//TODO//TODO структуры из пингпонга, нахрен от сюда или переделать
-
     game.score = 0;
     game.balls = 9;
 
@@ -394,11 +365,6 @@ void ShowScore() //TODO
 
 void ProcessInput() //TODO
 {
-    if (GetAsyncKeyState(VK_LEFT)) racket.x -= racket.speed;
-    if (GetAsyncKeyState(VK_RIGHT)) racket.x += racket.speed;
-    if (GetAsyncKeyState(VK_UP)) racket.y -= racket.speed;
-    if (GetAsyncKeyState(VK_DOWN)) racket.y += racket.speed;
-    
     if (!game.action && GetAsyncKeyState(VK_SPACE))
     {
         game.action = true;
@@ -446,13 +412,11 @@ void ShowLoot() {
     ShowBitmap( 0, 0, window.width, window.height, InventoryhBack);//задний фон
     bool exit = Exit.Show();
     bool BootsInventory = Boots__inventory_butt.Show();
-    ShowBitmap(racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
 }
 
 void ShowTerminal() {
     ShowBitmap(0, 0, window.width, window.height, TerminalhBack);//задний фон
     bool exit = Exit.Show();
-    ShowBitmap(racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
 }
 
 
@@ -608,7 +572,6 @@ void TerminalGame() { //TODO
 void LootGame() {
     ShowLoot();
     
-    ShowBitmap(racket.x - racket.width / 2., racket.y, racket.width, racket.height, racket.hBitmap);
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
     ProcessInput();//опрос клавиатуры
