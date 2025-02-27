@@ -16,13 +16,10 @@ struct {
 #include "mouse.h"
 #include "timer.h"
 #include "player.h"
-
-
+#include "enemy.h"
 
 enum class Entity { empty, enemy, lootchest, terminal };
 int random = 1;
-
-
 
 HBITMAP enemycco_bmp;
 HBITMAP lootchest_bmp;
@@ -57,14 +54,6 @@ enum class GameMode { map, battle, loot, terminal };
 GameMode game_mode = GameMode::map;
 
 void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
-
-
-
-
-
-#include "enemy.h"
-
-
 
 DWORD AttackStartTime = 0;
 DWORD AttackTime = 1000;
