@@ -18,6 +18,7 @@ struct {
 #include "player.h"
 #include "enemy.h"
 
+
 enum class Entity { empty, enemy, lootchest, terminal };
 int random = 1;
 
