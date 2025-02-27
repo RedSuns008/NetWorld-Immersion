@@ -17,7 +17,7 @@ int clamp(int x, int minX, int maxX)
 
 
 // секция данных игры
-struct racket_type {
+struct RacketType {
     float x, y, width, height, speed;
     HBITMAP hBitmap;
 
@@ -28,8 +28,8 @@ struct racket_type {
 
 };
 
-racket_type racket;
-enum class entity { empty, enemy, lootchest, terminal };
+RacketType racket;
+enum class Entity { empty, enemy, lootchest, terminal };
 //TODO
 
 int random = 1;
@@ -49,10 +49,10 @@ HBITMAP Battlephon1_bmp;
 HBITMAP Inventoryphon1_bmp;
 HBITMAP Terminalphon1_bmp;
 
-struct enemycco {
+struct Enemycco {
     float x, y, width, height;
     HBITMAP hBitmap;
-    entity type;
+    Entity type;
 
     void Load(const char* name)//TODO                                                                                                                         //TODO//TODO//TODO//TODO//TODO лоады как будто бы можно сократить до одного
     {
@@ -61,7 +61,7 @@ struct enemycco {
 
 };
 const int enemycout = 22;
-enemycco enemy1[enemycout];
+Enemycco enemy1[enemycout];
 
 struct { //TODO
     int score, balls;//количество набранных очков и оставшихся "жизней"
@@ -80,7 +80,7 @@ GameMode game_mode = GameMode::map;
 
 void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
 
-class  Mouse_ { //TODO
+class  Mouse { //TODO
 public:
     float x, y;
     bool L_butt, R_butt;
@@ -99,9 +99,9 @@ public:
 
 };
 //TODO
-Mouse_ Mouse;
+Mouse mouse;
 
-struct player_ {
+struct Player_ {
     int Health = 46000;
     int HealthMin = 0;
     int HealthMax = 50000;
@@ -132,7 +132,7 @@ struct player_ {
 
 };
 
-player_ player;
+Player_ player;
 
 struct Enemy_ {
     int HealthEnemy = 40000;
@@ -168,7 +168,7 @@ DWORD AttackcurrentTime = 0;
 
 
 //TODO кнопки расположены абсолютно хаотично, если сделать это менее вырвиглазно и более структурированно и писать игру и рефакторить станет легче, как будто бы на стадии написания для удобства можно отрисовать текст под нашими картиночками
-class button {
+class Button {
 public:
 
     float x, y, width, height;
@@ -176,7 +176,7 @@ public:
     HBITMAP hBitmapGlow;
 
     bool CheckCollisionMouse() {
-        return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
+        return mouse.x < x + width && mouse.x > x && mouse.y < y + height && mouse.y > y;
     }
     void Load(const char* imagename, const char* imagenameglow, float x_, float y_, float w, float h) {
         x = x_; y = y_;
@@ -215,8 +215,8 @@ public:
     }
 
     bool CheckCollisionMouseHeal() {
-        if (Mouse.L_butt) {
-            if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y)
+        if (mouse.L_butt) {
+            if (mouse.x < x + width && mouse.x > x && mouse.y < y + height && mouse.y > y)
             {
                 if (currentTime > healStartTime + healTime) //todo
                 {
@@ -257,7 +257,7 @@ public:
     }
     bool CheckCollisionMouse()
     {
-        return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
+        return mouse.x < x + width && mouse.x > x && mouse.y < y + height && mouse.y > y;
     }
 
    
@@ -266,7 +266,7 @@ public:
 
 Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar; //TODO ВЫРВИГЛААААЗ
 
-button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt,  Inventory_butt, Boots__inventory_butt;
+Button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt,  Inventory_butt, Boots__inventory_butt;
 HBITMAP hBack;// хэндл для фонового изображения
 HBITMAP hBattleBack;
 HBITMAP InventoryhBack;
@@ -313,16 +313,16 @@ void InitGame() //TODO
             if (i >= enemycout) {
                 continue;
             }
-            entity Etype;
+            Entity Etype;
             auto rnd = (rand() % 100);
             if (rnd < 97) {
-                Etype = entity::empty;
+                Etype = Entity::empty;
             }
             else {
                 rnd = 100 - rnd;
-                Etype = (entity)rnd;
+                Etype = (Entity)rnd;
             }
-            if (Etype == entity::empty) {
+            if (Etype == Entity::empty) {
                 continue;
             }
             enemy1[i].type = Etype;
@@ -330,13 +330,13 @@ void InitGame() //TODO
             
             switch (enemy1[i].type) // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС УЛУЧШАЯ ЧИТАЕМОСЬ И УСКОРЯМ АЛГЫ //TODO
             {
-            case entity::enemy:
+            case Entity::enemy:
                 enemy1[i].hBitmap = enemycco_bmp;
                 break;
-            case entity::lootchest:
+            case Entity::lootchest:
                 enemy1[i].hBitmap = lootchest_bmp;
                 break;
-            case entity::terminal:
+            case Entity::terminal:
                 enemy1[i].hBitmap = terminal_bmp;
                 break;
             }
@@ -484,13 +484,13 @@ void ShowMapGame() //TODO
         ShowBitmap(enemy1[i].x - enemy1[i].width / 2., enemy1[i].y, enemy1[i].width, enemy1[i].height, enemy1[i].hBitmap);
     }
     
-    ShowBitmap(Mouse.x, Mouse.y, 1,1, raketka_bmp);
+    ShowBitmap(mouse.x, mouse.y, 1,1, raketka_bmp);
 }
 
-bool CheckCollisionMouse(enemycco e) //TODO
+bool CheckCollisionMouse(Enemycco e) //TODO
 {
-    auto dx = Mouse.x - e.x;
-    auto dy = Mouse.y - e.y;
+    auto dx = mouse.x - e.x;
+    auto dy = mouse.y - e.y;
     auto dxy = sqrt(dx * dx + dy * dy);
 
     if (dxy < (dxy + e.height) / 2.)
@@ -505,17 +505,17 @@ bool CheckCollisionMouse(enemycco e) //TODO
 void ProcessRoom() //TODO
 {
     for (int i = 0; i < enemycout; i++) {  // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС
-        if (Mouse.L_butt) {
+        if (mouse.L_butt) {
             if (CheckCollisionMouse(enemy1[i]) == true)
             {
                 switch (enemy1[i].type) {
-                case entity::lootchest:
+                case Entity::lootchest:
                     game_mode = GameMode::loot;
                     break;
-                case entity::enemy:
+                case Entity::enemy:
                     game_mode = GameMode::battle;
                     break;
-                case entity::terminal:
+                case Entity::terminal:
                     game_mode = GameMode::terminal;
                     break;
                 }
@@ -547,7 +547,7 @@ void BattleGame() {//TODO ??????
     ShowBattle();//рисуем фон 
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
-    if (Mouse.L_butt)
+    if (mouse.L_butt)
     {
         if (PrimWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
@@ -598,7 +598,7 @@ void TerminalGame() { //TODO
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);
     Sleep(20);
     ProcessInput();
-    if (Mouse.L_butt) {
+    if (mouse.L_butt) {
         if (Exit.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
@@ -612,7 +612,7 @@ void LootGame() {
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
     ProcessInput();//опрос клавиатуры
-    if (Mouse.L_butt) {
+    if (mouse.L_butt) {
         if (Exit.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
@@ -626,17 +626,17 @@ void MapGame() {
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду) 
     for (int i = 0; i < enemycout; i++) {
-        if (Mouse.L_butt) {
+        if (mouse.L_butt) {
             if (CheckCollisionMouse(enemy1[i]))
             {
                 switch (enemy1[i].type) {
-                    case entity::lootchest:
+                    case Entity::lootchest:
                         game_mode = GameMode::loot;
                         break;
-                    case entity::enemy:
+                    case Entity::enemy:
                         game_mode = GameMode::battle;
                         break;
-                    case entity::terminal:
+                    case Entity::terminal:
                         game_mode = GameMode::terminal;
                         break;
                 }
@@ -660,7 +660,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         currentTime = timeGetTime();
         AttackcurrentTime = timeGetTime();
-        Mouse.Update();
+        mouse.Update();
         
         switch (game_mode) {
         case GameMode::map: MapGame(); break;
