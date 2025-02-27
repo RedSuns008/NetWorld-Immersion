@@ -38,8 +38,8 @@ struct Enemycco {
     }
 
 };
-const int enemycount = 22;
-Enemycco enemy1[enemycount];
+const int enemycout = 22;
+Enemycco enemy1[enemycout];
 
 struct { //TODO
     int score, balls;//количество набранных очков и оставшихся "жизней"
@@ -52,98 +52,81 @@ struct {
     int width, height;//сюда сохраним размеры окна которое создаст программа
 } window;
 
-
 enum class GameMode { map, battle, loot, terminal };
 GameMode game_mode = GameMode::map;
 
 void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
 
-class  Mouse { //TODO
+class Mouse_ {
 public:
     float x, y;
     bool L_butt, R_butt;
 
-    void  Update() { 
+    void Update() { //done
         POINT p;
         GetCursorPos(&p);
         ScreenToClient(window.hWnd, &p);
-        x = p.x;    
-        y = p.y;
-
-        L_butt = GetAsyncKeyState(VK_LBUTTON);
-        R_butt = GetAsyncKeyState(VK_RBUTTON);
+        x = static_cast<float>(p.x);
+        y = static_cast<float>(p.y);
+        L_butt = GetAsyncKeyState(VK_LBUTTON) & 0x8000;
+        R_butt = GetAsyncKeyState(VK_RBUTTON) & 0x8000;
     }
-
-
 };
-//TODO
-Mouse mouse;
+Mouse_ Mouse;
 
-struct Player_ {
+struct Player_ { //done
     int Health = 46000;
     int HealthMin = 0;
     int HealthMax = 50000;
     int Shield = 46000;
     int ShieldMin = 0;
     int ShieldMax = 50000;
-    int Shield_bonus = 2; // rework shield_bonus system
+    int Shield_bonus = 2; //TODO
 
     void adjustHealth(int v) {
-        srand(random);
-        random = rand() % v;
-        Health = Health - random;
+        Health -= rand() % v;
         Health = clamp(Health, HealthMin, HealthMax);
-    }
-    void adjustShield(int s) {
-        srand(random);
-        random = (rand() % s) * 2;
-        Shield = Shield - random;
-        Shield = clamp(Shield, ShieldMin, ShieldMax);
-    }
-    void adjustHeal() {
-        Health += 1500;
-        Health = clamp(Health, HealthMin, HealthMax);
-        Shield = (Shield + 1500) * Shield_bonus;
-        Shield = clamp(Shield, ShieldMin, ShieldMax);
-        healStartTime = currentTime;
     }
 
+    void adjustShield(int s) {
+        Shield -= (rand() % s) * Shield_bonus; // Учитываем бонус сразу
+        Shield = clamp(Shield, ShieldMin, ShieldMax);
+    }
+
+    void adjustHeal() {
+        Health = clamp(Health + 1500, HealthMin, HealthMax);
+        Shield = clamp((Shield + 1500) * Shield_bonus, ShieldMin, ShieldMax);
+        healStartTime = currentTime;
+    }
 };
 
 Player_ player;
 
-struct Enemy_ {
+struct Enemy_ { //done
     int HealthEnemy = 40000;
     int HealthEnemyMin = 0;
     int HealthEnemyMax = 50000;
     int ShieldEnemy = 40000;
     int ShieldEnemyMin = 0;
     int ShieldEnemyMax = 50000;
-    int ShieldEnemy_bonus = 20; // rework shield_bonus system
+    int ShieldEnemy_bonus = 20;
 
     void adjustHealth(int v) {
-        srand(random);
-        int random = rand() % v;
-        HealthEnemy = HealthEnemy - random;
+        HealthEnemy -= rand() % v;  // Убираем лишнюю переменную
         HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
     }
+
     void adjustShield(int s) {
-        srand(random);
-        int random = (rand() % s) * 2;
-        ShieldEnemy = ShieldEnemy - random;
+        ShieldEnemy -= (rand() % s) * 2;  // Убираем лишнюю переменную
         ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
     }
-   
 };
 
 Enemy_ Enemy;
 
-
 DWORD AttackStartTime = 0;
 DWORD AttackTime = 1000;
 DWORD AttackcurrentTime = 0;
-
-
 
 //TODO кнопки расположены абсолютно хаотично, если сделать это менее вырвиглазно и более структурированно и писать игру и рефакторить станет легче, как будто бы на стадии написания для удобства можно отрисовать текст под нашими картиночками
 class Button {
@@ -154,7 +137,7 @@ public:
     HBITMAP hBitmapGlow;
 
     bool CheckCollisionMouse() {
-        return mouse.x < x + width && mouse.x > x && mouse.y < y + height && mouse.y > y;
+        return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
     }
     void Load(const char* imagename, const char* imagenameglow, float x_, float y_, float w, float h) {
         x = x_; y = y_;
@@ -193,8 +176,8 @@ public:
     }
 
     bool CheckCollisionMouseHeal() {
-        if (mouse.L_butt) {
-            if (mouse.x < x + width && mouse.x > x && mouse.y < y + height && mouse.y > y)
+        if (Mouse.L_butt) {
+            if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y)
             {
                 if (currentTime > healStartTime + healTime) //todo
                 {
@@ -208,12 +191,11 @@ public:
     }
 };
 
-class Bar { //TODO
+class Bar { //done and todo
 public:
     float x, y, width, height, Health, Shield;
     HBITMAP hBitmapBack;
-    HBITMAP hBitmapFront; 
-
+    HBITMAP hBitmapFront;
     void Load(const char* imagenameBack, const char* imagenameFront, float x_, float y_, float w, float h) {
         x = x_; y = y_;
         hBitmapBack = LoadBMP(imagenameBack);
@@ -222,9 +204,7 @@ public:
         width = w * window.width;
         x = window.width / 2 - width * x;
         y = window.height / 2 + height * y;
-     }
-
-   
+    }
     void ShowHealth(int Health) { //TODO как будто бы можно сделать менее вырвиглазно в самой игре, да и кодяру оптимизировать
         ShowBitmap(x, y, width, height, hBitmapBack);
         ShowBitmap(x, y, Health / (float)player.HealthMax * width, height, hBitmapFront);
@@ -235,16 +215,13 @@ public:
     }
     bool CheckCollisionMouse()
     {
-        return mouse.x < x + width && mouse.x > x && mouse.y < y + height && mouse.y > y;
+        return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
     }
-
-   
 };
-
 
 Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar; //TODO ВЫРВИГЛААААЗ
 
-Button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt,  Inventory_butt, Boots__inventory_butt;
+Button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt, Inventory_butt, Boots__inventory_butt;
 HBITMAP hBack;// хэндл для фонового изображения
 HBITMAP hBattleBack;
 HBITMAP InventoryhBack;
@@ -255,11 +232,11 @@ void InitGame() //TODO
     //в этой секции загружаем спрайты с помощью функций gdi
     //пути относительные - файлы должны лежать рядом с .exe 
     //результат работы LoadImageA сохраняет в хэндлах битмапов, рисование спрайтов будет произовдиться с помощью этих хэндлов
-    
+
     PrimWeapon.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
     SpecWeapon.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
     DestructiveWeapon.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
-    EnemyB.Load("Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .25, .60 );
+    EnemyB.Load("Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .25, .60);
     Exit.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
     Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
     Inventory_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", 3.65, 5.12, .07, .07);
@@ -269,7 +246,7 @@ void InitGame() //TODO
     Shield_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.45, 31.7, .28, .01);
     ShieldEnemy_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.4, -42.4, .28, .01);
     HealthEnemy_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.4, -40.4, .28, .01);
-    
+
     enemycco_bmp = LoadBMP("enemycco.bmp");
     lootchest_bmp = LoadBMP("lootchest.bmp");
     terminal_bmp = LoadBMP("terminal.bmp");
@@ -278,28 +255,31 @@ void InitGame() //TODO
     Battlephon1_bmp = LoadBMP("Battlephon1.bmp");
     Inventoryphon1_bmp = LoadBMP("Inventoryphon1.bmp");
     Terminalphon1_bmp = LoadBMP("Terminalphon1.bmp");
+
     srand(0);
 
-    int i = 0;//TODO может тоже пересесть на свитчкейс и потом загнать в будущем это в переменку?
+    int i = 0;//TODO может тоже пересесть на свитчкейс и потом загнать в будущем это в переменку? Но тут я не уверен как можно переписать, пробовал, нарываюсь лицом на вилы ерроров
     float cellsize = 50;
     for (int x = 0; x < window.width / cellsize; x++) {
         for (int y = 0; y < window.height / cellsize; y++) {
-            if (i >= enemycount) {
-                break;
-            }
-
-            auto rnd = (rand() % 100);
-            if (rnd < 97)
-            {
+            if (i >= enemycout) {
                 continue;
             }
-            else
-            {
-                enemy1[i].type = (Entity)(100-rnd);
+            Entity Etype;
+            auto rnd = (rand() % 100);
+            if (rnd < 97) {
+                Etype = Entity::empty;
             }
+            else {
+                rnd = 100 - rnd;
+                Etype = (Entity)rnd;
+            }
+            if (Etype == Entity::empty) {
+                continue;
+            }
+            enemy1[i].type = Etype;
 
-            switch (enemy1[i].type) // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС УЛУЧШАЯ ЧИТАЕМОСЬ И УСКОРЯМ АЛГЫ //TODO
-            {
+            switch (enemy1[i].type) {
             case Entity::enemy:
                 enemy1[i].hBitmap = enemycco_bmp;
                 break;
@@ -313,8 +293,10 @@ void InitGame() //TODO
 
             enemy1[i].width = cellsize;
             enemy1[i].height = cellsize;
-            enemy1[i].x = enemy1[i].width * x;
-            enemy1[i].y = enemy1[i].height * y;
+            float screen_X = enemy1[i].width * x;
+            float screen_Y = enemy1[i].height * y;
+            enemy1[i].x = screen_X;
+            enemy1[i].y = screen_Y;
             i++;
         }
     }
@@ -334,7 +316,7 @@ void ProcessSound(const char* name)//проигрывание аудиофайла в формате .wav, фай
     PlaySound(TEXT(name), NULL, SND_FILENAME | SND_ASYNC);//переменная name содежрит имя файла. флаг ASYNC позволяет проигрывать звук паралельно с исполнением программы
 }
 
-void ShowScore() //TODO
+void ShowScore()
 {
     return;
     //поиграем шрифтами и цветами
@@ -353,14 +335,14 @@ void ShowScore() //TODO
     TextOutA(window.context, 200, 100, (LPCSTR)txt, strlen(txt));
 }
 
-void ProcessInput() //TODO
+/*void ProcessInput() //TODO
 {
     if (!game.action && GetAsyncKeyState(VK_SPACE))
     {
         game.action = true;
         ProcessSound("knopka-voda-vyisokii-rezkii.wav");
     }
-}
+}*/ 
 
 void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) //TODO
 {
@@ -390,16 +372,13 @@ void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) /
     DeleteDC(hMemDC); // Удаляем контекст памяти
 }
 
-
-
-
 void ShowInventory() {
     ShowBitmap(0, 0, window.width / 2., window.height / 2., InventoryhBack);//задний фон
     bool BootsInventory = Boots__inventory_butt.ShowInv();
 }
 
 void ShowLoot() {
-    ShowBitmap( 0, 0, window.width, window.height, InventoryhBack);//задний фон
+    ShowBitmap(0, 0, window.width, window.height, InventoryhBack);//задний фон
     bool exit = Exit.Show();
     bool BootsInventory = Boots__inventory_butt.Show();
 }
@@ -409,9 +388,8 @@ void ShowTerminal() {
     bool exit = Exit.Show();
 }
 
-
 void ShowBattle() {
-  
+
     ShowBitmap(0, 0, window.width, window.height, hBattleBack);//задний фон
 
     bool pw = PrimWeapon.Show();
@@ -426,64 +404,47 @@ void ShowBattle() {
     Shield_bar.ShowShield(player.Shield);
     ShieldEnemy_bar.ShowShield(Enemy.ShieldEnemy);
     HealthEnemy_bar.ShowHealth(Enemy.HealthEnemy);
-
-
- }
+}
 
 void ShowMapGame() //TODO
 {
     ShowBitmap(0, 0, window.width, window.height, hBack);//задний фон
 
-    for (int i = 0; i < enemycount; i++) {
+    for (int i = 0; i < enemycout; i++) {
         ShowBitmap(enemy1[i].x - enemy1[i].width / 2., enemy1[i].y, enemy1[i].width, enemy1[i].height, enemy1[i].hBitmap);
     }
-    
-    ShowBitmap(mouse.x, mouse.y, 1,1, raketka_bmp);
+    ShowBitmap(Mouse.x, Mouse.y, 1, 1, raketka_bmp);
 }
 
-bool CheckCollisionMouse(Enemycco e) //TODO
+bool CheckCollisionMouse(Enemycco& coll)
 {
-    auto dx = mouse.x - e.x;
-    auto dy = mouse.y - e.y;
-    auto dxy = sqrt(dx * dx + dy * dy);
+    return sqrt(pow(Mouse.x - coll.x, 2) + pow(Mouse.y - coll.y, 2)) < coll.height / 2.0;
+}//done
 
-    if (dxy < (dxy + e.height) / 2.)
-    {
-        return true;
-    }
-    return false;
-}
-
-
-
-void ProcessRoom() //TODO
+void ProcessRoom()
 {
-    for (int i = 0; i < enemycount; i++) {  // С ИФОВ ПЕРЕХОДИМ НА СВИТЧКЕЙС
-        if (mouse.L_butt) {
-            if (CheckCollisionMouse(enemy1[i]) == true)
-            {
-                switch (enemy1[i].type) {
-                case Entity::lootchest:
-                    game_mode = GameMode::loot;
-                    break;
-                case Entity::enemy:
-                    game_mode = GameMode::battle;
-                    break;
-                case Entity::terminal:
-                    game_mode = GameMode::terminal;
-                    break;
-                }
+    for (int i = 0; i < enemycout; i++) {
+        if (Mouse.L_butt && CheckCollisionMouse(enemy1[i]) == true) {
+            switch (enemy1[i].type) {
+            case Entity::lootchest:
+                game_mode = GameMode::loot;
+                break;
+            case Entity::enemy:
+                game_mode = GameMode::battle;
+                break;
+            case Entity::terminal:
+                game_mode = GameMode::terminal;
+                break;
             }
         }
     }
-}
-
-
+}//done
 
 void InitWindow()
 {
     SetProcessDPIAware();
-    window.hWnd = CreateWindow("edit", 0, WS_POPUP | WS_VISIBLE | WS_MAXIMIZE, 0, 0, 0, 0, 0, 0, 0, 0);
+    
+    window.hWnd = CreateWindow("edit", 0, WS_POPUPWINDOW |WS_VISIBLE , 0, 0, GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN), 0, 0, 0, 0);
 
     RECT r;
     GetClientRect(window.hWnd, &r);
@@ -500,19 +461,20 @@ void BattleGame() {//TODO ??????
 
     ShowBattle();//рисуем фон 
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
-    Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
-    if (mouse.L_butt)
+    Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду)
+    if (Mouse.L_butt)
     {
         if (PrimWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
-             
+
                 player.adjustHealth(4000);
                 player.adjustShield(6500);
                 Enemy.adjustHealth(5000);
                 Enemy.adjustShield(6500);
                 AttackStartTime = currentTime;
-            }                       
+            }
         }
+
         if (SpecWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
                 player.adjustHealth(7500);
@@ -524,7 +486,7 @@ void BattleGame() {//TODO ??????
         }
 
         if (DestructiveWeapon.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime)  {
+            if (AttackcurrentTime > AttackStartTime + AttackTime) {
                 player.adjustHealth(10000);
                 player.adjustShield(15000);
                 Enemy.adjustHealth(17000);
@@ -532,9 +494,7 @@ void BattleGame() {//TODO ??????
                 AttackStartTime = currentTime;
             }
         }
-        if (Heal_butt.CheckCollisionMouseHeal()) { //TO DOO/QUESTION?
-           
-        }
+        if (Heal_butt.CheckCollisionMouseHeal())
         if (Inventory_butt.CheckCollisionMouse()) {
             ShowInventory();
         }
@@ -544,15 +504,13 @@ void BattleGame() {//TODO ??????
         }
 
     }
-    ProcessInput();//опрос клавиатуры //TODO если я не совсем заплыл, то он делается в кодяре дважды
 }
 
 void TerminalGame() { //TODO
     ShowTerminal();
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);
-    Sleep(20);
-    ProcessInput();
-    if (mouse.L_butt) {
+    Sleep(16);
+    if (Mouse.L_butt) {
         if (Exit.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
@@ -561,51 +519,46 @@ void TerminalGame() { //TODO
 
 void LootGame() {
     ShowLoot();
-    
+
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
-    ProcessInput();//опрос клавиатуры
-    if (mouse.L_butt) {
+    if (Mouse.L_butt) {
         if (Exit.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
-    }//TODO
+    }//done
 }
-
 
 void MapGame() {
     ShowMapGame();//рисуем фон, ракетку и шарик
     ShowScore();
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду) 
-    for (int i = 0; i < enemycount; i++) {
-        if (mouse.L_butt) {
-            if (CheckCollisionMouse(enemy1[i]))
-            {
+    for (int i = 0; i < enemycout; i++) {
+        if (Mouse.L_butt) {
+            if (CheckCollisionMouse(enemy1[i])) {
                 switch (enemy1[i].type) {
-                    case Entity::lootchest:
-                        game_mode = GameMode::loot;
-                        break;
-                    case Entity::enemy:
-                        game_mode = GameMode::battle;
-                        break;
-                    case Entity::terminal:
-                        game_mode = GameMode::terminal;
-                        break;
+                case Entity::lootchest:
+                    game_mode = GameMode::loot;
+                    break;
+                case Entity::enemy:
+                    game_mode = GameMode::battle;
+                    break;
+                case Entity::terminal:
+                    game_mode = GameMode::terminal;
+                    break;
                 }
             }
         }
-    } //TODO
-    ProcessInput();//опрос клавиатуры//TODO
-    ProcessRoom();//обрабатываем отскоки от стен и каретки, попадание шарика в картетку
+    }
 }
 
-int APIENTRY wWinMain(
-    _In_ HINSTANCE hInstance,
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPWSTR    lpCmdLine,
     _In_ int       nCmdShow)
 {
+
     InitWindow();//здесь инициализируем все что нужно для рисования в окне
     InitGame();//здесь инициализируем переменные игры
 
@@ -613,8 +566,8 @@ int APIENTRY wWinMain(
     {
         currentTime = timeGetTime();
         AttackcurrentTime = timeGetTime();
-        mouse.Update();
-        
+        Mouse.Update();
+
         switch (game_mode) {
         case GameMode::map: MapGame(); break;
         case GameMode::battle: BattleGame(); break;
@@ -626,6 +579,8 @@ int APIENTRY wWinMain(
 }
 // Нужно максимально сократить повторы, загнать вызовы функций в переменные и вызывать их локально из переменных, а не создавать по новой, со switch'ами сделать то же самое, за счет чего увеличиваем общую читаемость и оптимизируем код
 // Максимально рефакторим, ПОСЛЕ оптимизируем. Все API'шные штуки выносим в отдельный слой и в дальнейшем вызываем функциями, а функции выносим в переменные и вызываем переменными.(например опрос мышки, опрос клавиатуры).
-//Когда в игре наносится урон игра крашится,выявить закономерность и поправить, когда кликаем на chest'ы игра крашится, когда кликаем на terminal'ы? тоже крашится.
+//Когда в игре наносится урон игра крашится,выявить закономерность и поправить, когда кликаем на chest'ы игра крашится, когда кликаем на terminal'ы? тоже крашится. UPD: Краш рандомный, то подряд несколько раз окно не открывается игры, то открывается, то открывается и крашится, то открывается и дает поиграть.
 // Прежде чем пересадимся на новую либу, чистим код от лишних сущностей, переписываем всё всё всё под нашу игру, что бы не было переменных из пинг-понга/арканоида. Не забываем что кодяра у нас в X86 разрядности, хотя я бы перевел на X64, нахрен 32-х битку)))).
 //TODO - везде писал так, ктрл+ф и радуемся жизни
+
+//Нужно с выделением памяти поработать, он сначала берет 8мб, потом падает в 2 и статично держит их на основном экране игры.

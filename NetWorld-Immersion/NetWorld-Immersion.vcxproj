@@ -130,9 +130,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="..\Debug\BackPack__inventory_butt.bmp" />
     <Image Include="..\Debug\Battlephon1.bmp" />
     <Image Include="..\Debug\Boots__inventory_butt.bmp" />
@@ -167,6 +164,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WinApiUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
