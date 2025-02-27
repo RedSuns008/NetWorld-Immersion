@@ -163,6 +163,12 @@
     <Image Include="..\Debug\UpperArmor__inventory_butt.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bmp.h" />
+    <ClInclude Include="enemy.h" />
+    <ClInclude Include="mouse.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="utils.h" />
     <ClInclude Include="WinApiUtils.h" />
   </ItemGroup>
   <ItemGroup>

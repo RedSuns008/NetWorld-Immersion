@@ -102,6 +102,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WinApiUtils.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="mouse.h" />
+    <ClInclude Include="enemy.h" />
+    <ClInclude Include="bmp.h" />
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

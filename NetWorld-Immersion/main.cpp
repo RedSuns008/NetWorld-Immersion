@@ -4,19 +4,25 @@
 
 #include "windows.h"
 #include "math.h"
-#include "WinApiUtils.h"
 
-int clamp(int x, int minX, int maxX)
-{
-    return max(min(maxX, x), minX);
-}
+struct {
+    HWND hWnd;//хэндл окна
+    HDC device_context, context;// два контекста устройства (для буферизации)
+    int width, height;//сюда сохраним размеры окна которое создаст программа
+} window;
+
+#include "WinApiUtils.h"
+#include "utils.h"
+#include "mouse.h"
+#include "timer.h"
+#include "player.h"
+
+
 
 enum class Entity { empty, enemy, lootchest, terminal };
 int random = 1;
 
-DWORD healStartTime = 0;
-DWORD healTime = 2000;
-DWORD currentTime = 0;
+
 
 HBITMAP enemycco_bmp;
 HBITMAP lootchest_bmp;
@@ -46,83 +52,19 @@ struct { //TODO
     bool action = false;//состояние - ожидание (игрок должен нажать пробел) или игра
 } game;
 
-struct {
-    HWND hWnd;//хэндл окна
-    HDC device_context, context;// два контекста устройства (для буферизации)
-    int width, height;//сюда сохраним размеры окна которое создаст программа
-} window;
 
 enum class GameMode { map, battle, loot, terminal };
 GameMode game_mode = GameMode::map;
 
 void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
 
-class Mouse_ {
-public:
-    float x, y;
-    bool L_butt, R_butt;
 
-    void Update() { //done
-        POINT p;
-        GetCursorPos(&p);
-        ScreenToClient(window.hWnd, &p);
-        x = static_cast<float>(p.x);
-        y = static_cast<float>(p.y);
-        L_butt = GetAsyncKeyState(VK_LBUTTON) & 0x8000;
-        R_butt = GetAsyncKeyState(VK_RBUTTON) & 0x8000;
-    }
-};
-Mouse_ Mouse;
 
-struct Player_ { //done
-    int Health = 46000;
-    int HealthMin = 0;
-    int HealthMax = 50000;
-    int Shield = 46000;
-    int ShieldMin = 0;
-    int ShieldMax = 50000;
-    int Shield_bonus = 2; //TODO
 
-    void adjustHealth(int v) {
-        Health -= rand() % v;
-        Health = clamp(Health, HealthMin, HealthMax);
-    }
 
-    void adjustShield(int s) {
-        Shield -= (rand() % s) * Shield_bonus; // Учитываем бонус сразу
-        Shield = clamp(Shield, ShieldMin, ShieldMax);
-    }
+#include "enemy.h"
 
-    void adjustHeal() {
-        Health = clamp(Health + 1500, HealthMin, HealthMax);
-        Shield = clamp((Shield + 1500) * Shield_bonus, ShieldMin, ShieldMax);
-        healStartTime = currentTime;
-    }
-};
 
-Player_ player;
-
-struct Enemy_ { //done
-    int HealthEnemy = 40000;
-    int HealthEnemyMin = 0;
-    int HealthEnemyMax = 50000;
-    int ShieldEnemy = 40000;
-    int ShieldEnemyMin = 0;
-    int ShieldEnemyMax = 50000;
-    int ShieldEnemy_bonus = 20;
-
-    void adjustHealth(int v) {
-        HealthEnemy -= rand() % v;  // Убираем лишнюю переменную
-        HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
-    }
-
-    void adjustShield(int s) {
-        ShieldEnemy -= (rand() % s) * 2;  // Убираем лишнюю переменную
-        ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
-    }
-};
-
-Enemy_ Enemy;
 
 DWORD AttackStartTime = 0;
 DWORD AttackTime = 1000;
