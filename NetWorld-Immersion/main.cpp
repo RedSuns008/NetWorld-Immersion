@@ -11,25 +11,21 @@ struct {
     int width, height;//сюда сохраним размеры окна которое создаст программа
 } window;
 
+
+void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
+
 #include "WinApiUtils.h"
 #include "utils.h"
 #include "mouse.h"
 #include "timer.h"
 #include "player.h"
 #include "enemy.h"
-
+#include "HBITMAPS.h"
+#include "Button.h"
+#include "Bar.h"
 
 enum class Entity { empty, enemy, lootchest, terminal };
 int random = 1;
-
-HBITMAP enemycco_bmp;
-HBITMAP lootchest_bmp;
-HBITMAP terminal_bmp;
-HBITMAP raketka_bmp;
-HBITMAP phon1_bmp;
-HBITMAP Battlephon1_bmp;
-HBITMAP Inventoryphon1_bmp;
-HBITMAP Terminalphon1_bmp;
 
 struct Enemycco {
     float x, y, width, height;
@@ -49,26 +45,9 @@ struct { //TODO
     int score, balls;//количество набранных очков и оставшихся "жизней"
     bool action = false;//состояние - ожидание (игрок должен нажать пробел) или игра
 } game;
-
-
+ 
 enum class GameMode { map, battle, loot, terminal };
 GameMode game_mode = GameMode::map;
-
-void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
-
-DWORD AttackStartTime = 0;
-DWORD AttackTime = 1000;
-DWORD AttackcurrentTime = 0;
-
-//TODO кнопки расположены абсолютно хаотично, если сделать это менее вырвиглазно и более структурированно и писать игру и рефакторить станет легче, как будто бы на стадии написания для удобства можно отрисовать текст под нашими картиночками
-#include "Button.h"
-#include "Bar.h"
-
-Button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt, Inventory_butt, Boots__inventory_butt;
-HBITMAP hBack;// хэндл для фонового изображения
-HBITMAP hBattleBack;
-HBITMAP InventoryhBack;
-HBITMAP TerminalhBack;
 
 void InitGame() { //TODO
     //в этой секции загружаем спрайты с помощью функций gdi

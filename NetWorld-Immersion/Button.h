@@ -1,3 +1,6 @@
+
+//TODO кнопки расположены абсолютно хаотично, если сделать это менее вырвиглазно и более структурированно и писать игру и рефакторить станет легче, как будто бы на стадии написания для удобства можно отрисовать текст под нашими картиночками
+
 class Button {
 public:
 
@@ -46,8 +49,8 @@ public:
 
     bool CheckCollisionMouseHeal() {
         if (Mouse.L_butt) {
-            if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y) {
-                if (currentTime > healStartTime + healTime) { //todo
+            if (Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y)  {
+                if (currentTime > healStartTime + healTime)   { //todo
                     player.adjustHeal();
                     return true;
                 }
@@ -56,3 +59,5 @@ public:
         return false;
     }
 };
+
+Button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt, Inventory_butt, Boots__inventory_butt;
