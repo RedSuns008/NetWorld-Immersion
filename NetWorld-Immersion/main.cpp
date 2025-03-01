@@ -320,38 +320,16 @@ void ShowTerminal() {
     bool exit = Exit.Show();
 }
 
-void ShowBattle() {
 
-    ShowBitmap(0, 0, window.width, window.height, hBattleBack);//задний фон
 
-    bool pw = PrimWeapon.Show();
-    bool sw = SpecWeapon.Show();
-    bool dw = DestructiveWeapon.Show();
-    bool exit = Exit.Show();
-    bool enemy = EnemyB.Show();
-    bool HealButt = Heal_butt.Show();
-    bool InventoryButt = Inventory_butt.Show();
 
-    Health_bar.ShowHealth(player.Health);
-    Shield_bar.ShowShield(player.Shield);
-    ShieldEnemy_bar.ShowShield(Enemy.ShieldEnemy);
-    HealthEnemy_bar.ShowHealth(Enemy.HealthEnemy);
-}
-
-void ShowMapGame() //TODO
-{
-    ShowBitmap(0, 0, window.width, window.height, hBack);//задний фон
-
-    for (int i = 0; i < enemycout; i++) {
-        ShowBitmap(enemy1[i].x - enemy1[i].width / 2., enemy1[i].y, enemy1[i].width, enemy1[i].height, enemy1[i].hBitmap);
-    }
-    ShowBitmap(Mouse.x, Mouse.y, 1, 1, raketka_bmp);
-}
 
 bool CheckCollisionMouse(Enemycco& coll)//TODO
 {
     return sqrt(pow(Mouse.x - coll.x, 2) + pow(Mouse.y - coll.y, 2)) < coll.height;
 }
+#include "MapGame.h"
+
 
 void ProcessRoom()
 {
@@ -389,54 +367,7 @@ void InitWindow()
 
 }
 
-void BattleGame() {//TODO ??????
-
-    ShowBattle();//рисуем фон 
-    BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
-    Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду)
-    if (Mouse.L_butt)
-    {
-        if (PrimWeapon.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime) {
-
-                player.adjustHealth(4000);
-                player.adjustShield(6500);
-                Enemy.adjustHealth(5000);
-                Enemy.adjustShield(6500);
-                AttackStartTime = currentTime;
-            }
-        }
-
-        if (SpecWeapon.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime) {
-                player.adjustHealth(7500);
-                player.adjustShield(9000);
-                Enemy.adjustHealth(8000);
-                Enemy.adjustShield(12000);
-                AttackStartTime = currentTime;
-            }
-        }
-
-        if (DestructiveWeapon.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime) {
-                player.adjustHealth(10000);
-                player.adjustShield(15000);
-                Enemy.adjustHealth(17000);
-                Enemy.adjustShield(23000);
-                AttackStartTime = currentTime;
-            }
-        }
-        if (Heal_butt.CheckCollisionMouseHeal())
-        if (Inventory_butt.CheckCollisionMouse()) {
-            ShowInventory();
-        }
-
-        if (Exit.CheckCollisionMouse()) {
-            game_mode = GameMode::map;
-        }
-
-    }
-}
+#include "BattleGame.h"
 
 void TerminalGame() { //TODO
     ShowTerminal();
@@ -461,29 +392,7 @@ void LootGame() {
     }//done
 }
 
-void MapGame() {
-    ShowMapGame();//рисуем фон, ракетку и шарик
-    ShowScore();
-    BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
-    Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду) 
-    for (int i = 0; i < enemycout; i++) {
-        if (Mouse.L_butt) {
-            if (CheckCollisionMouse(enemy1[i])) {
-                switch (enemy1[i].type) {
-                case Entity::lootchest:
-                    game_mode = GameMode::loot;
-                    break;
-                case Entity::enemy:
-                    game_mode = GameMode::battle;
-                    break;
-                case Entity::terminal:
-                    game_mode = GameMode::terminal;
-                    break;
-                }
-            }
-        }
-    }
-}
+
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,

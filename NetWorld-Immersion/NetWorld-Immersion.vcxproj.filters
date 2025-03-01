@@ -108,6 +108,9 @@
     <ClInclude Include="bmp.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="timer.h" />
+    <ClInclude Include="MapGame.h" />
+    <ClInclude Include="BattleGame.h" />
+    <ClInclude Include="TerminalGame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
