@@ -111,6 +111,8 @@
     <ClInclude Include="MapGame.h" />
     <ClInclude Include="BattleGame.h" />
     <ClInclude Include="TerminalGame.h" />
+    <ClInclude Include="LootGame.h" />
+    <ClInclude Include="Inventory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

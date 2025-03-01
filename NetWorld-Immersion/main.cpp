@@ -304,32 +304,10 @@ void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) /
     DeleteDC(hMemDC); // Удаляем контекст памяти
 }
 
-void ShowInventory() {
-    ShowBitmap(0, 0, window.width / 2., window.height / 2., InventoryhBack);//задний фон
-    bool BootsInventory = Boots__inventory_butt.ShowInv();
-}
-
-void ShowLoot() {
-    ShowBitmap(0, 0, window.width, window.height, InventoryhBack);//задний фон
-    bool exit = Exit.Show();
-    bool BootsInventory = Boots__inventory_butt.Show();
-}
-
-void ShowTerminal() {
-    ShowBitmap(0, 0, window.width, window.height, TerminalhBack);//задний фон
-    bool exit = Exit.Show();
-}
-
-
-
-
-
 bool CheckCollisionMouse(Enemycco& coll)//TODO
 {
     return sqrt(pow(Mouse.x - coll.x, 2) + pow(Mouse.y - coll.y, 2)) < coll.height;
 }
-#include "MapGame.h"
-
 
 void ProcessRoom()
 {
@@ -367,30 +345,11 @@ void InitWindow()
 
 }
 
+#include "Inventory.h"
+#include "MapGame.h"
 #include "BattleGame.h"
-
-void TerminalGame() { //TODO
-    ShowTerminal();
-    BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);
-    Sleep(16);
-    if (Mouse.L_butt) {
-        if (Exit.CheckCollisionMouse()) {
-            game_mode = GameMode::map;
-        }
-    }
-}
-
-void LootGame() {
-    ShowLoot();
-
-    BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
-    Sleep(20);//ждем 16 милисекунд (1/количество кадров в секунду)
-    if (Mouse.L_butt) {
-        if (Exit.CheckCollisionMouse()) {
-            game_mode = GameMode::map;
-        }
-    }//done
-}
+#include "TerminalGame.h"
+#include "LootGame.h"
 
 
 
