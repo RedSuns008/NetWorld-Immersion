@@ -53,30 +53,6 @@ void InitGame() { //TODO
     //в этой секции загружаем спрайты с помощью функций gdi
     //пути относительные - файлы должны лежать рядом с .exe 
     //результат работы LoadImageA сохраняет в хэндлах битмапов, рисование спрайтов будет произовдиться с помощью этих хэндлов
-
-    PrimWeapon.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
-    SpecWeapon.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
-    DestructiveWeapon.Load("dw_butt.bmp", "dw_butt_glow.bmp", -0.7, 4.13, .09, .09);
-    EnemyB.Load("Enemy_butt.bmp", "Enemy_butt_glow.bmp", 0.43, -0.56, .25, .60);
-    Exit.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
-    Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
-    Inventory_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", 3.65, 5.12, .07, .07);
-    Boots__inventory_butt.LoadInv("Boots__inventory_butt.bmp", 0.5, 3., .4, .07);
-
-    Health_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.45, 33.7, .28, .01);
-    Shield_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.45, 31.7, .28, .01);
-    ShieldEnemy_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.4, -42.4, .28, .01);
-    HealthEnemy_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.4, -40.4, .28, .01);
-
-    enemycco_bmp = LoadBMP("enemycco.bmp");
-    lootchest_bmp = LoadBMP("lootchest.bmp");
-    terminal_bmp = LoadBMP("terminal.bmp");
-    raketka_bmp = LoadBMP("raketka.bmp");
-    phon1_bmp = LoadBMP("phon1.bmp");
-    Battlephon1_bmp = LoadBMP("Battlephon1.bmp");
-    Inventoryphon1_bmp = LoadBMP("Inventoryphon1.bmp");
-    Terminalphon1_bmp = LoadBMP("Terminalphon1.bmp");
-
     srand(0);
 
     int i = 0;//TODO может тоже пересесть на свитчкейс и потом загнать в будущем это в переменку? Но тут я не уверен как можно переписать, пробовал, нарываюсь лицом на вилы ерроров
@@ -224,6 +200,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     InitWindow();//здесь инициализируем все что нужно для рисования в окне
     InitGame();//здесь инициализируем переменные игры
+    InitMap();
 
     while (!GetAsyncKeyState(VK_ESCAPE))  {
         currentTime = timeGetTime();

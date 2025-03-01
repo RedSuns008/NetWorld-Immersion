@@ -3,9 +3,12 @@ void ShowLoot() {
     bool exit = Exit.Show();
     bool BootsInventory = Boots__inventory_butt.Show();
 }
+void InitLoot() {
 
+}
 
 void LootGame() {
+    InitLoot();
     ShowLoot();
 
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
