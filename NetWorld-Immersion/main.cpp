@@ -235,7 +235,7 @@ void InitGame() //TODO
 
     hBack = LoadBMP("phon1.bmp");
     hBattleBack = LoadBMP("Battlephon1.bmp");
-    InventoryhBack = LoadBMP("Inventoryphon1.bmp");
+    InventoryhBack = LoadBMP("Lootphon1.bmp");
     TerminalhBack = LoadBMP("Terminalphon1.bmp");
 
     game.score = 0;
@@ -348,10 +348,10 @@ void ShowMapGame() //TODO
     ShowBitmap(Mouse.x, Mouse.y, 1, 1, raketka_bmp);
 }
 
-bool CheckCollisionMouse(Enemycco& coll)
+bool CheckCollisionMouse(Enemycco& coll)//TODO
 {
-    return sqrt(pow(Mouse.x - coll.x, 2) + pow(Mouse.y - coll.y, 2)) < coll.height / 2.0;
-}//done
+    return sqrt(pow(Mouse.x - coll.x, 2) + pow(Mouse.y - coll.y, 2)) < coll.height;
+}
 
 void ProcessRoom()
 {
