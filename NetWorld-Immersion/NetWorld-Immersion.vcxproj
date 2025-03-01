@@ -168,6 +168,7 @@
     <ClInclude Include="enemy.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="LootGame.h" />
+    <ClInclude Include="ShowScore.h" />
     <ClInclude Include="TerminalGame.h" />
     <ClInclude Include="MapGame.h" />
     <ClInclude Include="mouse.h" />

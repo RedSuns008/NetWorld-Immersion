@@ -145,8 +145,7 @@ public:
         ShowBitmap(x, y, width, height, hBitmapBack);
         ShowBitmap(x, y, Shield / (float)player.ShieldMax * width, height, hBitmapFront);
     }
-    bool CheckCollisionMouse()
-    {
+    bool CheckCollisionMouse() {
         return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
     }
 };
@@ -159,8 +158,7 @@ HBITMAP hBattleBack;
 HBITMAP InventoryhBack;
 HBITMAP TerminalhBack;
 
-void InitGame() //TODO
-{
+void InitGame() { //TODO
     //в этой секции загружаем спрайты с помощью функций gdi
     //пути относительные - файлы должны лежать рядом с .exe 
     //результат работы LoadImageA сохраняет в хэндлах битмапов, рисование спрайтов будет произовдиться с помощью этих хэндлов
@@ -247,28 +245,7 @@ void ProcessSound(const char* name)//проигрывание аудиофайла в формате .wav, фай
 {
     PlaySound(TEXT(name), NULL, SND_FILENAME | SND_ASYNC);//переменная name содежрит имя файла. флаг ASYNC позволяет проигрывать звук паралельно с исполнением программы
 }
-
-void ShowScore()
-{
-    return;
-    //поиграем шрифтами и цветами
-    SetTextColor(window.context, RGB(160, 160, 160));
-    SetBkColor(window.context, RGB(0, 0, 0));
-    auto hFont = CreateFont(70, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 2, 0, "GEORGIA");
-    auto hTmp = (HFONT)SelectObject(window.context, hFont);
-
-    char txt[32];//буфер для текста
-    _itoa_s(game.score, txt, 10);//преобразование числовой переменной в текст. текст окажется в переменной txt
-    TextOutA(window.context, 10, 10, "Score", 5);
-    TextOutA(window.context, 200, 10, (LPCSTR)txt, strlen(txt));
-
-    _itoa_s(game.balls, txt, 10);
-    TextOutA(window.context, 10, 100, "Balls", 5);
-    TextOutA(window.context, 200, 100, (LPCSTR)txt, strlen(txt));
-}
-
-/*void ProcessInput() //TODO
-{
+/*void ProcessInput()  { //TODO
     if (!game.action && GetAsyncKeyState(VK_SPACE))
     {
         game.action = true;
@@ -276,8 +253,7 @@ void ShowScore()
     }
 }*/ 
 
-void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) //TODO
-{
+void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) { //TODO
     HBITMAP hbm, hOldbm;
     HDC hMemDC;
     BITMAP bm;
@@ -304,13 +280,11 @@ void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) /
     DeleteDC(hMemDC); // Удаляем контекст памяти
 }
 
-bool CheckCollisionMouse(Enemycco& coll)//TODO
-{
+bool CheckCollisionMouse(Enemycco& coll) { //TODO
     return sqrt(pow(Mouse.x - coll.x, 2) + pow(Mouse.y - coll.y, 2)) < coll.height;
 }
 
-void ProcessRoom()
-{
+void ProcessRoom() {
     for (int i = 0; i < enemycout; i++) {
         if (Mouse.L_butt && CheckCollisionMouse(enemy1[i]) == true) {
             switch (enemy1[i].type) {
@@ -328,8 +302,7 @@ void ProcessRoom()
     }
 }//done
 
-void InitWindow()
-{
+void InitWindow() {
     SetProcessDPIAware();
     
     window.hWnd = CreateWindow("edit", 0, WS_POPUPWINDOW |WS_VISIBLE , 0, 0, GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN), 0, 0, 0, 0);
@@ -356,14 +329,12 @@ void InitWindow()
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPWSTR    lpCmdLine,
-    _In_ int       nCmdShow)
-{
+    _In_ int       nCmdShow) {
 
     InitWindow();//здесь инициализируем все что нужно для рисования в окне
     InitGame();//здесь инициализируем переменные игры
 
-    while (!GetAsyncKeyState(VK_ESCAPE))
-    {
+    while (!GetAsyncKeyState(VK_ESCAPE))  {
         currentTime = timeGetTime();
         AttackcurrentTime = timeGetTime();
         Mouse.Update();

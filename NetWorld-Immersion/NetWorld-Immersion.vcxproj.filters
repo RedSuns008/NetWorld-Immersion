@@ -113,6 +113,7 @@
     <ClInclude Include="TerminalGame.h" />
     <ClInclude Include="LootGame.h" />
     <ClInclude Include="Inventory.h" />
+    <ClInclude Include="ShowScore.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
