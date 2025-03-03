@@ -130,9 +130,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="..\Debug\BackPack__inventory_butt.bmp" />
     <Image Include="..\Debug\Battlephon1.bmp" />
     <Image Include="..\Debug\Boots__inventory_butt.bmp" />
@@ -164,6 +161,27 @@
     <Image Include="..\Debug\sw__inventory_butt.png" />
     <Image Include="..\Debug\terminal.bmp" />
     <Image Include="..\Debug\UpperArmor__inventory_butt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bar.h" />
+    <ClInclude Include="BattleGame.h" />
+    <ClInclude Include="bmp.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="enemy.h" />
+    <ClInclude Include="HBITMAPS.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="LootGame.h" />
+    <ClInclude Include="ShowScore.h" />
+    <ClInclude Include="TerminalGame.h" />
+    <ClInclude Include="MapGame.h" />
+    <ClInclude Include="mouse.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="WinApiUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

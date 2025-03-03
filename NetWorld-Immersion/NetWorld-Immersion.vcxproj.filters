@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="..\Debug\Battlephon1.bmp">
       <Filter>Res</Filter>
     </Image>
@@ -102,5 +99,23 @@
     <Filter Include="Res">
       <UniqueIdentifier>{0aedb256-39ac-407e-97bd-82fe32ed7e08}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="WinApiUtils.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="mouse.h" />
+    <ClInclude Include="enemy.h" />
+    <ClInclude Include="bmp.h" />
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="MapGame.h" />
+    <ClInclude Include="BattleGame.h" />
+    <ClInclude Include="TerminalGame.h" />
+    <ClInclude Include="LootGame.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="ShowScore.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>
