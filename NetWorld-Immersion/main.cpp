@@ -5,14 +5,14 @@
 #include "windows.h"
 #include "math.h"
 
-struct {
+struct Window {
     HWND hWnd;//хэндл окна
     HDC device_context, context;// два контекста устройства (для буферизации)
     int width, height;//сюда сохраним размеры окна которое создаст программа
 } window;
 
 
-void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha = false);
+void ShowBitmap(int x, int y, int width, int height, HBITMAP hBitmapBall, bool alpha = false);
 
 #include "WinApiUtils.h"
 #include "utils.h"
@@ -32,7 +32,7 @@ struct Enemycco {
     HBITMAP hBitmap;
     Entity type;
 
-    void Load(const char* name)//TODO лоады как будто бы можно сократить до одного
+    void Load(const char* name)
     {
         hBitmap = LoadBMP(name);
     }
@@ -41,8 +41,8 @@ struct Enemycco {
 const int enemycout = 22;
 Enemycco enemy1[enemycout];
 
-struct { //TODO
-    int score, balls;//количество набранных очков и оставшихся "жизней"
+struct GameState {
+    int score, lives;//количество набранных очков и оставшихся "жизней"
     bool action = false;//состояние - ожидание (игрок должен нажать пробел) или игра
 } game;
  
@@ -50,53 +50,50 @@ enum class GameMode { map, battle, loot, terminal };
 GameMode game_mode = GameMode::map;
 
 void InitGame() { //TODO
-    //в этой секции загружаем спрайты с помощью функций gdi
-    //пути относительные - файлы должны лежать рядом с .exe 
-    //результат работы LoadImageA сохраняет в хэндлах битмапов, рисование спрайтов будет произовдиться с помощью этих хэндлов
-    srand(0);
+     srand(0);
 
-    int i = 0;//TODO может тоже пересесть на свитчкейс и потом загнать в будущем это в переменку? Но тут я не уверен как можно переписать, пробовал, нарываюсь лицом на вилы ерроров
+    int i = 0;
     float cellsize = 50;
-    for (int x = 0; x < window.width / cellsize; x++) {
-        for (int y = 0; y < window.height / cellsize; y++) {
-            if (i >= enemycout) {
-                continue;
-            }
-            Entity Etype;
-            auto rnd = (rand() % 100);
-            if (rnd < 97) {
-                Etype = Entity::empty;
-            }
-            else {
-                rnd = 100 - rnd;
-                Etype = (Entity)rnd;
-            }
-            if (Etype == Entity::empty) {
-                continue;
-            }
-            enemy1[i].type = Etype;
+        for (int x = 0; x < window.width / cellsize; x++) {
+            for (int y = 0; y < window.height / cellsize; y++) {
+                if (i >= enemycout) {
+                    continue;
+                }
+                Entity Etype;
+                auto rnd = (rand() % 100);
+                if (rnd < 97) {
+                    Etype = Entity::empty;
+                }
+                else {
+                    rnd = 100 - rnd;
+                    Etype = (Entity)rnd;
+                }
+                if (Etype == Entity::empty) {
+                    continue;
+                }
+                enemy1[i].type = Etype;
 
-            switch (enemy1[i].type) {
-            case Entity::enemy:
-                enemy1[i].hBitmap = enemycco_bmp;
-                break;
-            case Entity::lootchest:
-                enemy1[i].hBitmap = lootchest_bmp;
-                break;
-            case Entity::terminal:
-                enemy1[i].hBitmap = terminal_bmp;
-                break;
-            }
+                    switch (enemy1[i].type) {
+                    case Entity::enemy:
+                        enemy1[i].hBitmap = enemycco_bmp;
+                        break;
+                    case Entity::lootchest:
+                        enemy1[i].hBitmap = lootchest_bmp;
+                        break;
+                    case Entity::terminal:
+                        enemy1[i].hBitmap = terminal_bmp;
+                        break;
+                    }
 
-            enemy1[i].width = cellsize;
-            enemy1[i].height = cellsize;
-            float screen_X = enemy1[i].width * x;
-            float screen_Y = enemy1[i].height * y;
-            enemy1[i].x = screen_X;
-            enemy1[i].y = screen_Y;
-            i++;
+                enemy1[i].width = cellsize;
+                enemy1[i].height = cellsize;
+                float screen_X = enemy1[i].width * x;
+                float screen_Y = enemy1[i].height * y;
+                enemy1[i].x = screen_X;
+                enemy1[i].y = screen_Y;
+                i++;
+            }
         }
-    }
 
     hBack = LoadBMP("phon1.bmp");
     hBattleBack = LoadBMP("Battlephon1.bmp");
@@ -104,50 +101,34 @@ void InitGame() { //TODO
     TerminalhBack = LoadBMP("Terminalphon1.bmp");
 
     game.score = 0;
-    game.balls = 9;
+    game.lives = 9;
 
 }
 
-void ProcessSound(const char* name)//проигрывание аудиофайла в формате .wav, файл должен лежать в той же папке где и программа
+/*void ProcessSound(const char* name)//проигрывание аудиофайла в формате .wav, файл должен лежать в той же папке где и программа
 {
     PlaySound(TEXT(name), NULL, SND_FILENAME | SND_ASYNC);//переменная name содежрит имя файла. флаг ASYNC позволяет проигрывать звук паралельно с исполнением программы
-}
-/*void ProcessInput()  { //TODO
-    if (!game.action && GetAsyncKeyState(VK_SPACE))
-    {
-        game.action = true;
-        ProcessSound("knopka-voda-vyisokii-rezkii.wav");
-    }
-}*/ 
+}*/
 
-void ShowBitmap(int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool alpha) { //TODO
-    HBITMAP hbm, hOldbm;
-    HDC hMemDC;
+void ShowBitmap(int x, int y, int width, int height, HBITMAP hBitmap, bool alpha) {
+    HDC hMemDC = CreateCompatibleDC(window.context);
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
     BITMAP bm;
 
-    hMemDC = CreateCompatibleDC(window.context); // Создаем контекст памяти, совместимый с контекстом отображения
-    hOldbm = (HBITMAP)SelectObject(hMemDC, hBitmapBall);// Выбираем изображение bitmap в контекст памяти
-
-    if (hOldbm) // Если не было ошибок, продолжаем работу
-    {
-        GetObject(hBitmapBall, sizeof(BITMAP), (LPSTR)&bm); // Определяем размеры изображения
-
-        if (alpha)
-        {
-            TransparentBlt(window.context, x, y, x1, y1, hMemDC, 0, 0, x1, y1, RGB(0, 0, 0));//все пиксели черного цвета будут интепретированы как прозрачные
+    if (hOldBitmap) {
+        GetObject(hBitmap, sizeof(BITMAP), &bm);
+        if (alpha) {
+            TransparentBlt(window.context, x, y, width, height, hMemDC, NULL, NULL, width, height, RGB(0, 0, 0));
         }
-        else
-        {
-            StretchBlt(window.context, x, y, x1, y1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY); // Рисуем изображение bitmap
+        else {
+            StretchBlt(window.context, x, y, width, height, hMemDC, NULL, NULL, bm.bmWidth, bm.bmHeight, SRCCOPY);
         }
-
-        SelectObject(hMemDC, hOldbm);// Восстанавливаем контекст памяти
+        SelectObject(hMemDC, hOldBitmap);
     }
-
-    DeleteDC(hMemDC); // Удаляем контекст памяти
+    DeleteDC(hMemDC);
 }
 
-bool CheckCollisionMouse(Enemycco& coll) { //TODO
+bool CheckCollisionMouse(Enemycco& coll) {
     return sqrt(pow(Mouse.x - coll.x, 2) + pow(Mouse.y - coll.y, 2)) < coll.height;
 }
 
@@ -172,7 +153,7 @@ void ProcessRoom() {
 void InitWindow() {
     SetProcessDPIAware();
     
-    window.hWnd = CreateWindow("edit", 0, WS_POPUPWINDOW |WS_VISIBLE , 0, 0, GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN), 0, 0, 0, 0);
+    window.hWnd = CreateWindow("edit", NULL, WS_POPUPWINDOW |WS_VISIBLE , 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, NULL, NULL);
 
     RECT r;
     GetClientRect(window.hWnd, &r);
@@ -193,13 +174,10 @@ void InitWindow() {
 
 
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPWSTR    lpCmdLine,
-    _In_ int       nCmdShow) {
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
 
-    InitWindow();//здесь инициализируем все что нужно для рисования в окне
-    InitGame();//здесь инициализируем переменные игры
+    InitWindow();
+    InitGame();
     InitMap();
 
     while (!GetAsyncKeyState(VK_ESCAPE))  {
