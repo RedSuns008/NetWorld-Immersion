@@ -6,10 +6,11 @@ void InitBattle() {
     Exit.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
     Heal_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", -2.65, 5.12, .07, .07);
     Inventory_butt.Load("Heal_butt.bmp", "Heal_butt.bmp", 3.65, 5.12, .07, .07);
-    Health_bar.ShowHealth(player.Health);
-    Shield_bar.ShowShield(player.Shield);
-    ShieldEnemy_bar.ShowShield(Enemy.ShieldEnemy);
-    HealthEnemy_bar.ShowHealth(Enemy.HealthEnemy);
+    Health_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.45, 33.7, .28, .01);
+    Shield_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.45, 31.7, .28, .01);
+    ShieldEnemy_bar.Load("Shield_bar_back.bmp", "Shield_bar_front.bmp", 0.4, -42.4, .28, .01);
+    HealthEnemy_bar.Load("Health_bar_back.bmp", "Health_bar_front.bmp", 0.4, -40.4, .28, .01);
+
     Battlephon1_bmp = LoadBMP("Battlephon1.bmp");
     Exit.Load("Exit_butt.bmp", "Exit_butt_glow.bmp", 12, -16, .04, .03);
  
@@ -19,6 +20,11 @@ void InitBattle() {
 void ShowBattle() {
 
     ShowBitmap(0, 0, window.width, window.height, hBattleBack);//задний фон
+
+    Health_bar.ShowHealth(player.Health);
+    Shield_bar.ShowShield(player.Shield);
+    ShieldEnemy_bar.ShowShield(Enemy.ShieldEnemy);
+    HealthEnemy_bar.ShowHealth(Enemy.HealthEnemy);
 
     bool pw = PrimWeapon.Show();
     bool sw = SpecWeapon.Show();
