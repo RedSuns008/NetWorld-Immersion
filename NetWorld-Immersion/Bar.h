@@ -25,4 +25,4 @@ public:
         return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
     }
 };
-Bar Health_bar, HealthEnemy_bar, Shield_bar, ShieldEnemy_bar; //TODO 论新让死览狼
+Bar Health, HealthEnemy, Shield, ShieldEnemy; //TODO 论新让死览狼
