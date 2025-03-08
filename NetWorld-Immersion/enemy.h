@@ -10,11 +10,13 @@ struct Enemy_ { //done
     void adjustHealth(int v) {
         HealthEnemy -= rand() % v;  // Убираем лишнюю переменную
         HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
+        AttackStartTime = AttackcurrentTime;
     }
 
     void adjustShield(int s) {
         ShieldEnemy -= (rand() % s) * 2;  // Убираем лишнюю переменную
         ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
+        AttackStartTime = AttackcurrentTime;
     }
 };
 

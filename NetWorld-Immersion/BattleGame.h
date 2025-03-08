@@ -34,15 +34,15 @@ void ShowBattle() {
     bool HealButt = Heal_butt.Show();
     bool InventoryButt = Inventory_butt.Show();
 
-}
+} 
 
 void BattleGame() {//TODO ??????
     InitBattle();
     ShowBattle();//рисуем фон 
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду)
-    if (Mouse.L_butt)
-    {
+    if (Mouse.L_butt)  {
+        // добавить цикл whilе. условие выхода наше хп=0 или хп врага =0
         if (PrimWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
 
@@ -73,11 +73,8 @@ void BattleGame() {//TODO ??????
                 AttackStartTime = currentTime;
             }
         }
-        if (Heal_butt.CheckCollisionMouseHeal())
-            if (Inventory_butt.CheckCollisionMouse()) {
-                ShowInventory();
-            }
-
+        if (Heal_butt.CheckCollisionMouseHeal());
+           
         if (Exit.CheckCollisionMouse()) {
             game_mode = GameMode::map;
         }
