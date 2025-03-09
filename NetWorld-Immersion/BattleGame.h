@@ -1,3 +1,5 @@
+#include "math.h";
+
 void InitBattle() {
     PrimWeapon.Load("pw_butt.bmp", "pw_butt_glow.bmp", 1.65, 4.13, .09, .09);
     SpecWeapon.Load("sw_butt.bmp", "sw_butt_glow.bmp", 0.5, 4.13, .09, .09);
@@ -41,43 +43,47 @@ void BattleGame() {//TODO ??????
     ShowBattle();//рисуем фон 
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду)
-    if (Mouse.L_butt)  {
-        // добавить цикл whilе. условие выхода наше хп=0 или хп врага =0
-        if (PrimWeapon.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime) {
+         // добавить цикл whilе. условие выхода наше хп=0 или хп врага =0
+        // 
+    //while ((player.Health >= 0) || (Enemy.HealthEnemy >= 0)) {
+        if (Mouse.L_butt) {
+            if (PrimWeapon.CheckCollisionMouse()) {
+                if (AttackcurrentTime > AttackStartTime + AttackTime) {
 
-                player.adjustHealth(4000);
-                player.adjustShield(6500);
-                Enemy.adjustHealth(5000);
-                Enemy.adjustShield(6500);
-                AttackStartTime = currentTime;
+                    player.adjustHealth(4000);
+                    player.adjustShield(6500);
+                    Enemy.adjustHealth(5000);
+                    Enemy.adjustShield(6500);
+                    AttackStartTime = currentTime;
+                }
             }
-        }
 
-        if (SpecWeapon.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime) {
-                player.adjustHealth(7500);
-                player.adjustShield(9000);
-                Enemy.adjustHealth(8000);
-                Enemy.adjustShield(12000);
-                AttackStartTime = currentTime;
+            if (SpecWeapon.CheckCollisionMouse()) {
+                if (AttackcurrentTime > AttackStartTime + AttackTime) {
+                    player.adjustHealth(7500);
+                    player.adjustShield(9000);
+                    Enemy.adjustHealth(8000);
+                    Enemy.adjustShield(12000);
+                    AttackStartTime = currentTime;
+                }
             }
-        }
 
-        if (DestructiveWeapon.CheckCollisionMouse()) {
-            if (AttackcurrentTime > AttackStartTime + AttackTime) {
-                player.adjustHealth(10000);
-                player.adjustShield(15000);
-                Enemy.adjustHealth(17000);
-                Enemy.adjustShield(23000);
-                AttackStartTime = currentTime;
+            if (DestructiveWeapon.CheckCollisionMouse()) {
+                if (AttackcurrentTime > AttackStartTime + AttackTime) {
+                    player.adjustHealth(10000);
+                    player.adjustShield(15000);
+                    Enemy.adjustHealth(17000);
+                    Enemy.adjustShield(23000);
+                    AttackStartTime = currentTime;
+                }
             }
-        }
-        if (Heal_butt.CheckCollisionMouseHeal());
-           
-        if (Exit.CheckCollisionMouse()) {
-            game_mode = GameMode::map;
+            if (Heal_butt.CheckCollisionMouseHeal());
+
+            if (Exit.CheckCollisionMouse()) {
+                game_mode = GameMode::map;
+            }
+
         }
 
-    }
+    //}
 }
