@@ -192,6 +192,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         case GameMode::loot: LootGame(); break;
         case GameMode::terminal: TerminalGame(); break;
         }
+        BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);
+        Sleep(16);
     }
 
 }
