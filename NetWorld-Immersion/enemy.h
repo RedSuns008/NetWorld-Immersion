@@ -1,4 +1,7 @@
-struct Enemy_ { //done
+#include <cstdlib>   // Для rand()
+
+class Enemy_ {
+public:
     int HealthEnemy = 40000;
     int HealthEnemyMin = 0;
     int HealthEnemyMax = 50000;
@@ -7,17 +10,26 @@ struct Enemy_ { //done
     int ShieldEnemyMax = 50000;
     int ShieldEnemy_bonus = 20;
 
+    Enemy_(int name) : HealthEnemy(10) {
+        // Здесь нет необходимости повторно объявлять переменные
+    }
+
+    Enemy_(){}
+
     void adjustHealth(int v) {
-        HealthEnemy -= rand() % v;  // Убираем лишнюю переменную
+        HealthEnemy -= v + rand() % v;  // Убираем лишнюю переменную
         HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
-        AttackStartTime = AttackcurrentTime;
+         AttackStartTime = AttackcurrentTime; // Убедитесь, что эти переменные определены
     }
 
     void adjustShield(int s) {
-        ShieldEnemy -= (rand() % s) * 2;  // Убираем лишнюю переменную
+        ShieldEnemy -= s + (rand() % s) * 2;  // Убираем лишнюю переменную
         ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
-        AttackStartTime = AttackcurrentTime;
+         AttackStartTime = AttackcurrentTime; // Убедитесь, что эти переменные определены
     }
 };
 
+// Создание объекта класса
 Enemy_ Enemy;
+int a;
+Enemy_ killer(a);

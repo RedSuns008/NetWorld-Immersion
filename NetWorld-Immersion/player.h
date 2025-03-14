@@ -8,13 +8,13 @@ struct Player_ { //done
     int Shield_bonus = 2; //TODO
 
     void adjustHealth(int v) {
-        Health -= rand() % v;
+        Health -= v + rand() % v;
         Health = clamp(Health, HealthMin, HealthMax);
         AttackStartTime = AttackcurrentTime;
     }
 
     void adjustShield(int s) {
-        Shield -= (rand() % s) * Shield_bonus; // Учитываем бонус сразу
+        Shield -= s + (rand() % s) * Shield_bonus; // Учитываем бонус сразу
         Shield = clamp(Shield, ShieldMin, ShieldMax);
         AttackStartTime = AttackcurrentTime;
     }
