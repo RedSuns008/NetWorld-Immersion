@@ -21,6 +21,14 @@ public:
         ShowBitmap(x, y, width, height, hBitmapBack);
         ShowBitmap(x, y, Shield / (float)player.ShieldMax * width, height, hBitmapFront);
     }
+    void ShowShieldEnemy(int Shield) {
+        ShowBitmap(x, y, width, height, hBitmapBack);
+        ShowBitmap(x, y, Shield / (float)Enemy.ShieldEnemyMax * width, height, hBitmapFront);
+    }
+    void ShowHealthEnemy(int Health) { //TODO как будто бы можно сделать менее вырвиглазно в самой игре, да и кодяру оптимизировать
+        ShowBitmap(x, y, width, height, hBitmapBack);
+        ShowBitmap(x, y, Health / (float)Enemy.HealthEnemyMax * width, height, hBitmapFront);
+    }
     bool CheckCollisionMouse() {
         return Mouse.x < x + width && Mouse.x > x && Mouse.y < y + height && Mouse.y > y;
     }

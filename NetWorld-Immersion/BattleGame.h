@@ -32,8 +32,8 @@ void ShowBattle() {
 
     Health.ShowHealth(player.Health);
     Shield.ShowShield(player.Shield);
-    ShieldEnemy.ShowShield(Enemy.ShieldEnemy);
-    HealthEnemy.ShowHealth(Enemy.HealthEnemy);
+    ShieldEnemy.ShowShieldEnemy(Enemy.ShieldEnemy);
+    HealthEnemy.ShowHealthEnemy(Enemy.HealthEnemy);
 
     bool pw = PrimWeapon.Show();
     bool sw = SpecWeapon.Show();
@@ -55,8 +55,8 @@ void BattleGame() {//TODO ??????
 
                 player.adjustHealth(4000);
                 player.adjustShield(6500);
-                Enemy.adjustHealth(5000);
-                Enemy.adjustShield(6500);
+                Enemy.adjustHealth();
+                Enemy.adjustShield();
                 AttackStartTime = currentTime;
             }
         }
@@ -65,8 +65,8 @@ void BattleGame() {//TODO ??????
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
                 player.adjustHealth(7500);
                 player.adjustShield(9000);
-                Enemy.adjustHealth(8000);
-                Enemy.adjustShield(12000);
+                Enemy.adjustHealth();
+                Enemy.adjustShield();
                 AttackStartTime = currentTime;
             }
         }
@@ -75,8 +75,8 @@ void BattleGame() {//TODO ??????
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
                 player.adjustHealth(10000);
                 player.adjustShield(15000);
-                Enemy.adjustHealth(17000);
-                Enemy.adjustShield(23000);
+                Enemy.adjustHealth();
+                Enemy.adjustShield();
                 AttackStartTime = currentTime;
             }
         }

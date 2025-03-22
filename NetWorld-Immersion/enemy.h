@@ -1,35 +1,60 @@
-#include <cstdlib>   // Для rand()
-
 class Enemy_ {
 public:
     int HealthEnemy = 40000;
     int HealthEnemyMin = 0;
-    int HealthEnemyMax = 50000;
+    int HealthEnemyMax = HealthEnemy * 2;
     int ShieldEnemy = 40000;
     int ShieldEnemyMin = 0;
-    int ShieldEnemyMax = 50000;
+    int ShieldEnemyMax = ShieldEnemy * 2;
     int ShieldEnemy_bonus = 20;
+	int AttackEnemy = 40000;
+    
+    Enemy_(int a) {
 
-    Enemy_(int name) : HealthEnemy(10) {
-        // Здесь нет необходимости повторно объявлять переменные
+		switch (a)
+		{
+		case 1:
+			//std::cout << "Haker\n";
+			this->AttackEnemy += 5555;
+			this->HealthEnemy += 5000;
+			this->ShieldEnemy += 20000;
+
+			break;
+		case 2:
+			//std::cout << "Killer\n";
+			this->AttackEnemy += 15000;
+			this->HealthEnemy += 10000;
+			this->ShieldEnemy += 12000;
+			break;
+		case 3:
+			//std::cout << "Tank\n";
+			this->AttackEnemy += 5000;
+			this->HealthEnemy += 25000;
+			this->ShieldEnemy += 20000;
+
+			break;
+		case 4:
+			//std::cout << "Vydo\n";
+			this->AttackEnemy += 20000;
+			this->HealthEnemy += 25000;
+			this->ShieldEnemy += 22000;
+			break;
+		}
     }
 
-    Enemy_(){}
-
-    void adjustHealth(int v) {
-        HealthEnemy -= v + rand() % v;  // Убираем лишнюю переменную
+    void adjustHealth() {
+        HealthEnemy -= AttackEnemy + (rand() % 1000);  // доработать формулу урона по щиту и хп
         HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
-         AttackStartTime = AttackcurrentTime; // Убедитесь, что эти переменные определены
+         AttackStartTime = AttackcurrentTime; 
     }
 
-    void adjustShield(int s) {
-        ShieldEnemy -= s + (rand() % s) * 2;  // Убираем лишнюю переменную
+    void adjustShield() {
+        ShieldEnemy -= AttackEnemy + (rand() % 1000) * 2;  //доработать формулу урона по щиту и хп
         ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
-         AttackStartTime = AttackcurrentTime; // Убедитесь, что эти переменные определены
+         AttackStartTime = AttackcurrentTime; 
     }
 };
 
 // Создание объекта класса
-Enemy_ Enemy;
-int a;
-Enemy_ killer(a);
+int a = rand() % 5;
+Enemy_ Enemy(a);
