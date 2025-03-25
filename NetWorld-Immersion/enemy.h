@@ -1,13 +1,14 @@
 class Enemy_ {
 public:
-    int HealthEnemy = 40000;
-    int HealthEnemyMin = 0;
-    int HealthEnemyMax = HealthEnemy * 2;
-    int ShieldEnemy = 40000;
-    int ShieldEnemyMin = 0;
-    int ShieldEnemyMax = ShieldEnemy * 2;
-    int ShieldEnemy_bonus = 20;
-	int AttackEnemy = 40000;
+    float HealthEnemy = 40000;
+    float HealthEnemyMin = 0;
+    float HealthEnemyMax = HealthEnemy * 2;
+    float ShieldEnemy = 40000;
+    float ShieldEnemyMin = 0;
+    float ShieldEnemyMax = ShieldEnemy * 2;
+    float ShieldEnemy_bonus = 20;
+	float AttackEnemy = 40000;
+	float AttackEnemyShield = (AttackEnemy * 3) / 4;
     
     Enemy_(int a) {
 
@@ -42,17 +43,23 @@ public:
 		}
     }
 
-    void adjustHealth() {
-        HealthEnemy -= AttackEnemy + (rand() % 1000);  // доработать формулу урона по щиту и хп
-        HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
-         AttackStartTime = AttackcurrentTime; 
-    }
 
-    void adjustShield() {
-        ShieldEnemy -= AttackEnemy + (rand() % 1000) * 2;  //доработать формулу урона по щиту и хп
-        ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
-         AttackStartTime = AttackcurrentTime; 
-    }
+	void adjustHealth(int v) {
+		HealthEnemy -= v + rand() % v;
+		HealthEnemy = clamp(HealthEnemy, HealthEnemyMin, HealthEnemyMax);
+		AttackStartTime = AttackcurrentTime;
+	}
+
+	void adjustShield(int s) {
+		ShieldEnemy -= s + (rand() % s); // Учитываем бонус сразу
+		ShieldEnemy = clamp(ShieldEnemy, ShieldEnemyMin, ShieldEnemyMax);
+		AttackStartTime = AttackcurrentTime;
+	}
+
+
+
+
+
 };
 
 // Создание объекта класса

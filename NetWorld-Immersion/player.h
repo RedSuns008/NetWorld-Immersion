@@ -1,11 +1,12 @@
 struct Player_ { //done
-    int Health = 46000;
-    int HealthMin = 0;
-    int HealthMax = 50000;
-    int Shield = 46000;
-    int ShieldMin = 0;
-    int ShieldMax = 50000;
-    int Shield_bonus = 2; //TODO
+   float Health = 460000;
+   float HealthMin = 0;
+   float HealthMax = 500000;
+   float Shield = 460000;
+   float ShieldMin = 0;
+   float ShieldMax = 500000;
+   float Shield_bonus = 2; //
+   float Attack = 20000;
 
     void adjustHealth(int v) {
         Health -= v + rand() % v;

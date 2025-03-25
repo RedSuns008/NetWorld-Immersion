@@ -53,30 +53,30 @@ void BattleGame() {//TODO ??????
         if (PrimWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
 
-                player.adjustHealth(4000);
-                player.adjustShield(6500);
-                Enemy.adjustHealth();
-                Enemy.adjustShield();
+                player.adjustHealth(Enemy.AttackEnemy);
+                player.adjustShield(Enemy.AttackEnemyShield);
+                Enemy.adjustHealth(player.Attack);
+                Enemy.adjustShield(player.Attack);
                 AttackStartTime = currentTime;
             }
         }
 
         if (SpecWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
-                player.adjustHealth(7500);
-                player.adjustShield(9000);
-                Enemy.adjustHealth();
-                Enemy.adjustShield();
+                player.adjustHealth(Enemy.AttackEnemy);
+                player.adjustShield(Enemy.AttackEnemyShield);
+                Enemy.adjustHealth(player.Attack);
+                Enemy.adjustShield(player.Attack);
                 AttackStartTime = currentTime;
             }
         }
 
         if (DestructiveWeapon.CheckCollisionMouse()) {
             if (AttackcurrentTime > AttackStartTime + AttackTime) {
-                player.adjustHealth(10000);
-                player.adjustShield(15000);
-                Enemy.adjustHealth();
-                Enemy.adjustShield();
+                player.adjustHealth(Enemy.AttackEnemy);
+                player.adjustShield(Enemy.AttackEnemyShield);
+                Enemy.adjustHealth(player.Attack);
+                Enemy.adjustShield(player.Attack);
                 AttackStartTime = currentTime;
             }
         }
