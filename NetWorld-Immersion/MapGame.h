@@ -1,4 +1,17 @@
-void ShowMapGame() //TODO
+bool InitMapFlag = false;
+
+void InitMap() {
+    if (!InitMapFlag) {
+        enemycco_bmp = LoadBMP("enemycco.bmp");
+        lootchest_bmp = LoadBMP("lootchest.bmp");
+        terminal_bmp = LoadBMP("terminal.bmp");
+        raketka_bmp = LoadBMP("raketka.bmp");
+        phon1_bmp = LoadBMP("phon1.bmp");
+        InitMapFlag = true;
+    }
+}
+
+void ShowMapGame()
 {
     ShowBitmap(0, 0, window.width, window.height, hBack);//задний фон
 
@@ -7,16 +20,10 @@ void ShowMapGame() //TODO
     }
     ShowBitmap(Mouse.x, Mouse.y, 1, 1, raketka_bmp);
 }
-void InitMap() {
-    enemycco_bmp = LoadBMP("enemycco.bmp");
-    lootchest_bmp = LoadBMP("lootchest.bmp");
-    terminal_bmp = LoadBMP("terminal.bmp");
-    raketka_bmp = LoadBMP("raketka.bmp");
-    phon1_bmp = LoadBMP("phon1.bmp");
-}
+
 void MapGame() {
     InitMap();
-    ShowMapGame();//рисуем фон, ракетку и шарик
+    ShowMapGame();
     BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
     Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду) 
     for (int i = 0; i < enemycout; i++) {

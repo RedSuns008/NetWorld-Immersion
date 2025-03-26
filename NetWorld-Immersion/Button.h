@@ -60,4 +60,4 @@ public:
     }
 };
 
-Button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt, Inventory_butt, Boots__inventory_butt;
+Button PrimWeapon, SpecWeapon, DestructiveWeapon, EnemyB, Exit, Heal_butt, Inventory_butt, Boots_inventory_butt;

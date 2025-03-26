@@ -165,7 +165,6 @@
   <ItemGroup>
     <ClInclude Include="Bar.h" />
     <ClInclude Include="BattleGame.h" />
-    <ClInclude Include="bmp.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="HBITMAPS.h" />

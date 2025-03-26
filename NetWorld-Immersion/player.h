@@ -1,26 +1,29 @@
 struct Player_ { //done
-    int Health = 46000;
-    int HealthMin = 0;
-    int HealthMax = 50000;
-    int Shield = 46000;
-    int ShieldMin = 0;
-    int ShieldMax = 50000;
-    int Shield_bonus = 2; //TODO
+   float Health = 460000;
+   float HealthMin = 0;
+   float HealthMax = 500000;
+   float Shield = 460000;
+   float ShieldMin = 0;
+   float ShieldMax = 500000;
+   float Shield_bonus = 2; //
+   float Attack = 20000;
 
     void adjustHealth(int v) {
-        Health -= rand() % v;
+        Health -= v + rand() % v;
         Health = clamp(Health, HealthMin, HealthMax);
+        AttackStartTime = AttackcurrentTime;
     }
 
     void adjustShield(int s) {
-        Shield -= (rand() % s) * Shield_bonus; // Учитываем бонус сразу
+        Shield -= s + (rand() % s) * Shield_bonus; // Учитываем бонус сразу
         Shield = clamp(Shield, ShieldMin, ShieldMax);
+        AttackStartTime = AttackcurrentTime;
     }
 
     void adjustHeal() {
-        Health = clamp(Health + 1500, HealthMin, HealthMax);
-        Shield = clamp((Shield + 1500) * Shield_bonus, ShieldMin, ShieldMax);
-        healStartTime = currentTime;
+        Health = clamp(Health + HealthMax / 100., HealthMin, HealthMax);
+        Shield = clamp((Shield + ShieldMax / 100.) * Shield_bonus, ShieldMin, ShieldMax);
+        healStartTime = AttackcurrentTime;
     }
 };
 
